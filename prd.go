@@ -1,39 +1,77 @@
 // prd - process diagrams, simple diagrams for concurrent processes
 package prd
 
-import "fmt"
+import (
+	"bytes"
+	"fmt"
 
-//go:generate stringer -type=Proces,Channel
+	"github.com/ffel/prd/prdsymb"
+)
+
+var (
+	offsetX int = 250
+	offsetY int = 50
+	deltaX  int = 50
+	deltaY  int = 50
+)
 
 type Proces int
 
-const (
-	goingForAWalk Proces = iota
-	AliceGettingReady
-	BobGettingReady
-)
-
 type Channel int
 
+type processtate int
+
 const (
-	a Channel = iota
-	b
-	c
+	active processtate = iota
+	waitingForSend
+	waitingForReceive
 )
+
+type state struct {
+	since  int
+	pstate processtate
+}
+
+var states map[Proces]state
+
+func x(val int) int {
+	return offsetX + (val-1)*deltaX
+}
+
+func y(val Proces) int {
+	return offsetY + int(val)*deltaY
+}
+
+func PrdStart(width, height int) {
+	states = make(map[Proces]state)
+	prdsymb.Start(width, height)
+}
+
+func PrdEnd() *bytes.Buffer {
+	return prdsymb.End()
+}
 
 func At(time int, proc Proces) Verb {
 	fmt.Printf("at %d, process %q", time, proc)
-	return Verb{}
+	return Verb{time, proc}
 }
 
-type Verb struct{}
+type Verb struct {
+	time int
+	proc Proces
+}
 
 func (v Verb) Starts(label string) {
 	fmt.Printf(" starts with label %q\n", label)
+	states[v.proc] = state{v.time, active}
+	prdsymb.Label(x(v.time), y(v.proc), label)
 }
 
 func (v Verb) Creates(proc Proces, label string) {
 	fmt.Printf(" creates proces %q with label %q\n", proc, label)
+	states[v.proc] = state{v.time, active}
+	prdsymb.Label(x(v.time), y(proc), label)
+	prdsymb.Create(x(v.time), y(v.proc), y(proc))
 }
 
 func (v Verb) WantsToReceive() On {

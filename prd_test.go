@@ -1,6 +1,26 @@
 package prd
 
+import (
+	"fmt"
+	"os"
+)
+
+const (
+	goingForAWalk Proces = iota
+	AliceGettingReady
+	BobGettingReady
+)
+
+const (
+	a Channel = iota
+	b
+	c
+)
+
+// go test 2> out.svg
 func Example() {
+	PrdStart(800, 500)
+
 	At(0, goingForAWalk).Starts("going for a Walk")
 
 	At(1, goingForAWalk).Creates(AliceGettingReady, "Alice getting ready")
@@ -23,6 +43,8 @@ func Example() {
 	At(10, goingForAWalk).Terminates()
 	At(10, BobGettingReady).Terminates()
 	At(10, AliceGettingReady).Terminates()
+
+	fmt.Fprintln(os.Stderr, PrdEnd().String())
 
 	// output:
 	// at 0, process "goingForAWalk" starts with label "going for a Walk"
