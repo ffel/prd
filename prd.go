@@ -74,26 +74,18 @@ func (v Verb) Creates(proc Proces, label string) {
 	prdsymb.Create(x(v.time), y(v.proc), y(proc))
 }
 
-func (v Verb) WantsToReceive() On {
-	fmt.Printf(" wants to receive")
-	return On{}
+func (v Verb) WantsToReceiveOn(c Channel) OnOption {
+	fmt.Printf(" wants to receive on channel %q\n", c)
+	return OnOption{}
 }
 
-func (v Verb) WantsToSend(data string) On {
-	fmt.Printf(" wants to send %q", data)
-	return On{}
+func (v Verb) WantsToSendOn(c Channel, data string) OnOption {
+	fmt.Printf(" wants to send %q on channel %q\n", data, c)
+	return OnOption{}
 }
 
 func (v Verb) Terminates() {
 	fmt.Printf(" terminates\n")
-}
-
-type On struct{}
-
-func (on On) OnChannel(c Channel) OnOption {
-	fmt.Printf(" on channel %q\n", c)
-
-	return OnOption{}
 }
 
 type OnOption struct{}

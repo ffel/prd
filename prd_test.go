@@ -33,17 +33,17 @@ func Example() {
 
 	// controleer ook even de imports: `import . prd`
 
-	At(3, AliceGettingReady).WantsToReceive().OnChannel(a)
-	At(3, BobGettingReady).WantsToReceive().OnChannel(a)
+	At(3, AliceGettingReady).WantsToReceiveOn(a)
+	At(3, BobGettingReady).WantsToReceiveOn(a)
 
-	At(4, goingForAWalk).WantsToSend("true").OnChannel(a).HandledBy(AliceGettingReady)
+	At(4, goingForAWalk).WantsToSendOn(a, "data").HandledBy(AliceGettingReady)
 
 	// situatie 2: send moet wachten op een ontvanger
 
-	At(4, AliceGettingReady).WantsToSend("data").OnChannel(b)
-	At(5, BobGettingReady).WantsToSend("data").OnChannel(b)
+	At(4, AliceGettingReady).WantsToSendOn(b, "data")
+	At(5, BobGettingReady).WantsToSendOn(b, "data")
 
-	At(7, goingForAWalk).WantsToReceive().OnChannel(b).HandledBy(AliceGettingReady)
+	At(7, goingForAWalk).WantsToReceiveOn(b).HandledBy(AliceGettingReady)
 
 	At(10, goingForAWalk).Terminates()
 	At(10, BobGettingReady).Terminates()
@@ -57,7 +57,7 @@ func Example() {
 	// at 2, process "goingForAWalk" creates proces "BobGettingReady" with label "Bob getting ready"
 	// at 3, process "AliceGettingReady" wants to receive on channel "a"
 	// at 3, process "BobGettingReady" wants to receive on channel "a"
-	// at 4, process "goingForAWalk" wants to send "true" on channel "a"
+	// at 4, process "goingForAWalk" wants to send "data" on channel "a"
 	// -  handled by "AliceGettingReady"
 	// at 4, process "AliceGettingReady" wants to send "data" on channel "b"
 	// at 5, process "BobGettingReady" wants to send "data" on channel "b"
