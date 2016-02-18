@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	offsetX int = 250
+	offsetX int = 230
 	offsetY int = 50
-	deltaX  int = 50
-	deltaY  int = 50
+	deltaX  int = 60
+	deltaY  int = 60
 )
 
 type Proces int
@@ -30,8 +30,9 @@ const (
 )
 
 type state struct {
-	since  int
-	pstate processtate
+	since   int
+	pstate  processtate
+	channel Channel // in case of waiting, which channel
 }
 
 var states map[Proces]state
@@ -65,35 +66,71 @@ type Verb struct {
 
 func (v Verb) Starts(label string) {
 	fmt.Printf(" starts with label %q\n", label)
-	states[v.proc] = state{v.time, active}
+	states[v.proc] = state{since: v.time, pstate: active}
 	prdsymb.Label(x(v.time), y(v.proc), label)
 }
 
 func (v Verb) Creates(proc Proces, label string) {
 	fmt.Printf(" creates proces %q with label %q\n", proc, label)
-	states[proc] = state{v.time, active}
+	states[proc] = state{since: v.time, pstate: active}
 	prdsymb.Label(x(v.time), y(proc), label)
 	prdsymb.Create(x(v.time), y(v.proc), y(proc))
 }
 
 func (v Verb) WantsToReceiveOn(c Channel) OnOption {
 	fmt.Printf(" wants to receive on channel %q\n", c)
-	fmt.Printf("-- since %d, state %q, now %d\n", states[v.proc].since, states[v.proc].pstate, v.time)
+	fmt.Printf("-R- since %d, state %q, channel: %q, now %d\n", states[v.proc].since, states[v.proc].pstate, states[v.proc].channel, v.time)
+
+	// draw line
 	if states[v.proc].pstate == active {
 		prdsymb.Process(prdsymb.Active, x(states[v.proc].since), x(v.time), y(v.proc))
 	}
+	// draw receive symbol
 	prdsymb.Receive(prdsymb.Wait, x(v.time), y(v.proc), color)
-	states[v.proc] = state{v.time, waitingForReceive}
+
+	// if someone is able to send on c, handle that
+
+	states[v.proc] = state{since: v.time, pstate: waitingForReceive, channel: c}
+
+	// we hebben hier wel een option probleem: we kunnen niet *vooruit* kijken naar een evt
+	// handler.  Of omdraaien (eerst optie), of een terminating call
+
 	return OnOption{}
+}
+
+// finds a process that currently wants to receive on channel c
+// returns false in case there is no such Proces
+func findPresentReceiver(c Channel) (Proces, bool) {
+	for v, k := range states {
+		if k.channel == c && k.pstate == waitingForReceive {
+			return v, true
+		}
+	}
+
+	return 0, false
 }
 
 func (v Verb) WantsToSendOn(c Channel, data string) OnOption {
 	fmt.Printf(" wants to send %q on channel %q\n", data, c)
+	fmt.Printf("-S- since %d, state %q, channel: %q, now %d\n", states[v.proc].since, states[v.proc].pstate, states[v.proc].channel, v.time)
+
 	if states[v.proc].pstate == active {
 		prdsymb.Process(prdsymb.Active, x(states[v.proc].since), x(v.time), y(v.proc))
 	}
 	prdsymb.Send(prdsymb.Wait, x(v.time), y(v.proc), color)
-	states[v.proc] = state{v.time, waitingForSend}
+
+	// if someone is able to receive on c, handle that
+	if rproc, ok := findPresentReceiver(c); ok {
+		fmt.Printf("- received by process %q\n", rproc)
+		prdsymb.Receive(prdsymb.Postponed, x(v.time), y(rproc), color)
+		prdsymb.Send(prdsymb.Postponed, x(v.time), y(v.proc), color)
+		prdsymb.Channel(x(v.time), y(v.proc), y(rproc), color)
+		prdsymb.Process(prdsymb.Asleep, x(states[rproc].since), x(v.time), y(rproc))
+
+		// change states
+	}
+
+	states[v.proc] = state{since: v.time, pstate: waitingForSend, channel: c}
 	return OnOption{}
 }
 

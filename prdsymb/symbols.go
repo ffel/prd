@@ -11,10 +11,10 @@ var buffer *bytes.Buffer
 
 var canvas *svg.SVG
 
-type mode int
+type Mode int
 
 const (
-	Wait mode = iota // send and receive
+	Wait Mode = iota // send and receive
 	Postponed
 	Immediately
 	Active // processes
@@ -32,7 +32,7 @@ const (
 
 // draw a send symbol (is a little bit like an "s")
 // de basis kan een soort s zijn (een gespiegelde z) en deze kan worden ingevuld
-func Send(m mode, x, y int, color string) {
+func Send(m Mode, x, y int, color string) {
 	if m == Wait || m == Immediately {
 		canvas.Polygon([]int{x - d + sw, x + d + sw, x + d + sw}, []int{y - d - sw, y - d - sw, y + d - sw},
 			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f",
@@ -46,7 +46,7 @@ func Send(m mode, x, y int, color string) {
 }
 
 // Receice draws a receive message symbol
-func Receive(m mode, x, y int, color string) {
+func Receive(m Mode, x, y int, color string) {
 	if m == Wait || m == Immediately {
 		canvas.Polyline([]int{x - d - sw, x - d - sw, x + d + sw}, []int{y + d + sw, y - d - sw, y - d - sw},
 			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
@@ -60,7 +60,7 @@ func Receive(m mode, x, y int, color string) {
 }
 
 // Process draws a horizontal process line
-func Process(m mode, x1, x2, y int) {
+func Process(m Mode, x1, x2, y int) {
 	if m == Active {
 		canvas.Line(x1+d+4*sw, y, x2-d-4*sw, y, fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
 			"black", size, opacity))

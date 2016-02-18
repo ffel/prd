@@ -17,6 +17,10 @@ func Example() {
 	At(3, goingForAWalk).WantsToReceiveOn(a)
 	At(5, BobGettingReady).WantsToSendOn(a, "data")
 
+	At(6, goingForAWalk).WantsToReceiveOn(a)
+
+	At(8, AliceGettingReady).WantsToSendOn(a, "data")
+
 	// situatie 1: receive moet wachten op een zender
 
 	// overweeg toch een WantsToSend("data", a) en WantsToReceive(a)
