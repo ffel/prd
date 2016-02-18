@@ -35,14 +35,14 @@ const (
 // de basis kan een soort s zijn (een gespiegelde z) en deze kan worden ingevuld
 func Send(m Mode, x, y int, color string) {
 	if m == Wait || m == Immediately {
-		canvas.Polygon([]int{x - d + sw, x + d + sw, x + d + sw}, []int{y - d - sw, y - d - sw, y + d - sw},
-			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:%s;stroke-opacity:%.2f;fill-opacity:%.2f",
-				"none", size, color, opacity, opacity))
-	}
-	if m == Postponed || m == Immediately {
 		canvas.Polygon([]int{x - d - sw, x - d - sw, x + d - sw}, []int{y - d + sw, y + d + sw, y + d + sw},
 			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f",
 				color, size, opacity))
+	}
+	if m == Postponed || m == Immediately {
+		canvas.Polygon([]int{x - d + sw, x + d + sw, x + d + sw}, []int{y - d - sw, y - d - sw, y + d - sw},
+			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:%s;stroke-opacity:%.2f;fill-opacity:%.2f",
+				"none", size, color, opacity, opacity))
 	}
 }
 

@@ -25,6 +25,7 @@ const (
 	active processtate = iota
 	waitingForSend
 	waitingForReceive
+	terminated
 )
 
 type state struct {
@@ -88,27 +89,38 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) OnOption {
 	// draw receive symbol
 	prdsymb.Receive(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
-	// if someone is able to send on c, handle that
+	if sproc, ok := findPresentSender(c); ok {
+		fmt.Printf("- sent by proces %q\n", sproc)
 
-	states[info.proc] = state{since: info.time, pstate: waitingForReceive, channel: c}
+		prdsymb.Send(prdsymb.Postponed, x(info.time), y(sproc), channelColor(c))
+		prdsymb.Receive(prdsymb.Postponed, x(info.time), y(info.proc), channelColor(c))
+		prdsymb.Channel(x(info.time), y(sproc), y(info.proc), channelColor(c))
+		prdsymb.Process(prdsymb.Asleep, x(states[sproc].since), x(info.time), y(sproc))
 
-	// we hebben hier wel een option probleem: we kunnen niet *vooruit* kijken naar een evt
-	// handler.  Of omdraaien (eerst optie), of een terminating call
+		states[info.proc] = state{since: info.time, pstate: active}
+		states[sproc] = state{since: info.time, pstate: active}
+	} else {
+		states[info.proc] = state{since: info.time, pstate: waitingForReceive, channel: c}
+	}
 
 	return OnOption{}
 }
 
+// WantsToSendOn marks proces info.proc as to want send on channel c.
+// In another proces is to receive on c, the send will actually happen
 func (info ProcesInfo) WantsToSendOn(c Channel, data string) OnOption {
 	fmt.Printf(" wants to send %q on channel %q\n", data, c)
 	// fmt.Printf("-S- since %d, state %q, channel: %q, now %d\n", states[info.proc].since, states[info.proc].pstate, states[info.proc].channel, info.time)
 
+	// draw proces lone for info.proc
 	if states[info.proc].pstate == active {
 		prdsymb.Process(prdsymb.Active, x(states[info.proc].since), x(info.time), y(info.proc))
 	}
+	// draw send symbol
 	prdsymb.Send(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
 	if rproc, ok := findPresentReceiver(c); ok {
-		fmt.Printf("- received by process %q\n", rproc)
+		fmt.Printf("- received by proces %q\n", rproc)
 
 		prdsymb.Receive(prdsymb.Postponed, x(info.time), y(rproc), channelColor(c))
 		prdsymb.Send(prdsymb.Postponed, x(info.time), y(info.proc), channelColor(c))
@@ -116,6 +128,7 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) OnOption {
 		prdsymb.Process(prdsymb.Asleep, x(states[rproc].since), x(info.time), y(rproc))
 
 		states[info.proc] = state{since: info.time, pstate: active}
+		states[rproc] = state{since: info.time, pstate: active}
 	} else {
 		states[info.proc] = state{since: info.time, pstate: waitingForSend, channel: c}
 	}
@@ -125,6 +138,16 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) OnOption {
 
 func (info ProcesInfo) Terminates() {
 	fmt.Printf(" terminates\n")
+
+	var mode prdsymb.Mode
+	mode = prdsymb.Active
+
+	if states[info.proc].pstate != active {
+		mode = prdsymb.Asleep
+	}
+
+	prdsymb.Process(mode, x(states[info.proc].since), x(info.time), y(info.proc))
+	states[info.proc] = state{since: info.time, pstate: terminated}
 }
 
 type OnOption struct{}
@@ -151,6 +174,18 @@ func channelColor(c Channel) string {
 func findPresentReceiver(c Channel) (Proces, bool) {
 	for v, k := range states {
 		if k.channel == c && k.pstate == waitingForReceive {
+			return v, true
+		}
+	}
+
+	return 0, false
+}
+
+// finds a process that currently wants to send on channel c
+// returns false in case there is no such Proces
+func findPresentSender(c Channel) (Proces, bool) {
+	for v, k := range states {
+		if k.channel == c && k.pstate == waitingForSend {
 			return v, true
 		}
 	}

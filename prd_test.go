@@ -21,29 +21,13 @@ func Example() {
 
 	At(8, procesB).WantsToSendOn(a, "data")
 
-	// situatie 1: receive moet wachten op een zender
+	At(6, procesC).WantsToSendOn(b, "data")
+	At(10, procesB).WantsToReceiveOn(b)
 
-	// overweeg toch een WantsToSend("data", a) en WantsToReceive(a)
-	// of WantsToSendOn(a, "data") en WantsToReceiveOn(a)
+	At(14, procesA).Terminates()
+	At(14, procesB).Terminates()
 
-	// controleer ook even de imports: `import . prd`
-
-	// At(3, procesB).WantsToReceiveOn(a)
-	// At(4, procesC).WantsToReceiveOn(a)
-
-	// At(4, procesA).WantsToSendOn(a, "data").HandledBy(procesB)
-
-	// // situatie 2: send moet wachten op een ontvanger
-
-	// At(4, procesB).WantsToSendOn(b, "data")
-	// At(5, procesC).WantsToSendOn(b, "data")
-
-	// At(7, procesA).WantsToReceiveOn(b).HandledBy(procesB)
-
-	// At(10, procesA).Terminates()
-	// At(10, procesC).Terminates()
-	// At(10, procesB).Terminates()
-
+	// send svg to stderr
 	fmt.Fprintln(os.Stderr, PrdEnd().String())
 
 	// output:
