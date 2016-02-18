@@ -3,9 +3,9 @@ package prd
 //go:generate stringer -type=Proces,Channel,processtate
 
 const (
-	goingForAWalk Proces = iota
-	AliceGettingReady
-	BobGettingReady
+	procesA Proces = iota
+	procesB
+	procesC
 )
 
 const (

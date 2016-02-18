@@ -21,8 +21,6 @@ type Channel int
 
 type processtate int
 
-const color = "red"
-
 const (
 	active processtate = iota
 	waitingForSend
@@ -88,7 +86,7 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) OnOption {
 		prdsymb.Process(prdsymb.Active, x(states[info.proc].since), x(info.time), y(info.proc))
 	}
 	// draw receive symbol
-	prdsymb.Receive(prdsymb.Wait, x(info.time), y(info.proc), color)
+	prdsymb.Receive(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
 	// if someone is able to send on c, handle that
 
@@ -107,14 +105,14 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) OnOption {
 	if states[info.proc].pstate == active {
 		prdsymb.Process(prdsymb.Active, x(states[info.proc].since), x(info.time), y(info.proc))
 	}
-	prdsymb.Send(prdsymb.Wait, x(info.time), y(info.proc), color)
+	prdsymb.Send(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
 	if rproc, ok := findPresentReceiver(c); ok {
 		fmt.Printf("- received by process %q\n", rproc)
 
-		prdsymb.Receive(prdsymb.Postponed, x(info.time), y(rproc), color)
-		prdsymb.Send(prdsymb.Postponed, x(info.time), y(info.proc), color)
-		prdsymb.Channel(x(info.time), y(info.proc), y(rproc), color)
+		prdsymb.Receive(prdsymb.Postponed, x(info.time), y(rproc), channelColor(c))
+		prdsymb.Send(prdsymb.Postponed, x(info.time), y(info.proc), channelColor(c))
+		prdsymb.Channel(x(info.time), y(info.proc), y(rproc), channelColor(c))
 		prdsymb.Process(prdsymb.Asleep, x(states[rproc].since), x(info.time), y(rproc))
 
 		states[info.proc] = state{since: info.time, pstate: active}
@@ -133,6 +131,19 @@ type OnOption struct{}
 
 func (o OnOption) HandledBy(proc Proces) {
 	fmt.Printf("-  handled by %q\n", proc)
+}
+
+func channelColor(c Channel) string {
+	switch int(c) % 3 {
+	case 0:
+		return "red"
+	case 1:
+		return "blue"
+	case 2:
+		return "green"
+	}
+
+	return "black"
 }
 
 // finds a process that currently wants to receive on channel c

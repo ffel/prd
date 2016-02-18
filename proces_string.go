@@ -4,9 +4,9 @@ package prd
 
 import "fmt"
 
-const _Proces_name = "goingForAWalkAliceGettingReadyBobGettingReady"
+const _Proces_name = "procesAprocesBprocesC"
 
-var _Proces_index = [...]uint8{0, 13, 30, 45}
+var _Proces_index = [...]uint8{0, 7, 14, 21}
 
 func (i Proces) String() string {
 	if i < 0 || i+1 >= Proces(len(_Proces_index)) {
