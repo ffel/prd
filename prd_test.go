@@ -28,6 +28,11 @@ func Example() {
 
 	// situatie 1: receive moet wachten op een zender
 
+	// overweeg toch een WantsToSend("data", a) en WantsToReceive(a)
+	// of WantsToSendOn(a, "data") en WantsToReceiveOn(a)
+
+	// controleer ook even de imports: `import . prd`
+
 	At(3, AliceGettingReady).WantsToReceive().OnChannel(a)
 	At(3, BobGettingReady).WantsToReceive().OnChannel(a)
 
