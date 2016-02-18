@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	offsetX int = 230
-	offsetY int = 50
-	deltaX  int = 60
-	deltaY  int = 60
+	offsetX int = 100
+	offsetY int = 25
+	deltaX  int = 30
+	deltaY  int = 40
 )
 
 type Proces int

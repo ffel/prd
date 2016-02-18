@@ -22,10 +22,11 @@ const (
 )
 
 const (
-	d       = 20  // half symbol size
-	size    = 4   // line width
-	sw      = 2   // off set
-	opacity = 0.4 // opacity
+	d        = 10  // half symbol size
+	size     = 2   // line width
+	sw       = 1   // off set
+	opacity  = 0.3 // opacity
+	fontsize = 11  // font size
 )
 
 // http://tutorials.jenkov.com/svg/svg-and-css.html
@@ -35,13 +36,13 @@ const (
 func Send(m Mode, x, y int, color string) {
 	if m == Wait || m == Immediately {
 		canvas.Polygon([]int{x - d + sw, x + d + sw, x + d + sw}, []int{y - d - sw, y - d - sw, y + d - sw},
-			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f",
-				color, size, opacity))
+			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:%s;stroke-opacity:%.2f;fill-opacity:%.2f",
+				"none", size, color, opacity, opacity))
 	}
 	if m == Postponed || m == Immediately {
 		canvas.Polygon([]int{x - d - sw, x - d - sw, x + d - sw}, []int{y - d + sw, y + d + sw, y + d + sw},
-			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:%s;stroke-opacity:%.2f;fill-opacity:%.2f",
-				"none", size, color, opacity, opacity))
+			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f",
+				color, size, opacity))
 	}
 }
 
@@ -108,7 +109,7 @@ func Channel(x, y1, y2 int, color string) {
 // Label writes a process label
 func Label(x, y int, txt string) {
 	canvas.Text(x-d-4*sw, y+2*sw, txt, fmt.Sprintf("text-anchor:%s;font-size:%dpx;fill-opacity:%.2f;font-family:Verdana",
-		"end", 18, opacity))
+		"end", fontsize, opacity))
 }
 
 func Start(width, height int) {

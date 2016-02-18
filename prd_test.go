@@ -9,10 +9,10 @@ import (
 func Example() {
 	PrdStart(800, 500)
 
-	At(0, goingForAWalk).Starts("going for a Walk")
+	At(0, goingForAWalk).Starts("proces A")
 
-	At(1, goingForAWalk).Creates(AliceGettingReady, "Alice getting ready")
-	At(2, goingForAWalk).Creates(BobGettingReady, "Bob getting ready")
+	At(1, goingForAWalk).Creates(AliceGettingReady, "proces B")
+	At(2, goingForAWalk).Creates(BobGettingReady, "proces C")
 
 	At(3, goingForAWalk).WantsToReceiveOn(a)
 	At(5, BobGettingReady).WantsToSendOn(a, "data")
