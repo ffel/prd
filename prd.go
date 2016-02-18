@@ -21,6 +21,8 @@ type Channel int
 
 type processtate int
 
+const color = "red"
+
 const (
 	active processtate = iota
 	waitingForSend
@@ -69,18 +71,29 @@ func (v Verb) Starts(label string) {
 
 func (v Verb) Creates(proc Proces, label string) {
 	fmt.Printf(" creates proces %q with label %q\n", proc, label)
-	states[v.proc] = state{v.time, active}
+	states[proc] = state{v.time, active}
 	prdsymb.Label(x(v.time), y(proc), label)
 	prdsymb.Create(x(v.time), y(v.proc), y(proc))
 }
 
 func (v Verb) WantsToReceiveOn(c Channel) OnOption {
 	fmt.Printf(" wants to receive on channel %q\n", c)
+	fmt.Printf("-- since %d, state %q, now %d\n", states[v.proc].since, states[v.proc].pstate, v.time)
+	if states[v.proc].pstate == active {
+		prdsymb.Process(prdsymb.Active, x(states[v.proc].since), x(v.time), y(v.proc))
+	}
+	prdsymb.Receive(prdsymb.Wait, x(v.time), y(v.proc), color)
+	states[v.proc] = state{v.time, waitingForReceive}
 	return OnOption{}
 }
 
 func (v Verb) WantsToSendOn(c Channel, data string) OnOption {
 	fmt.Printf(" wants to send %q on channel %q\n", data, c)
+	if states[v.proc].pstate == active {
+		prdsymb.Process(prdsymb.Active, x(states[v.proc].since), x(v.time), y(v.proc))
+	}
+	prdsymb.Send(prdsymb.Wait, x(v.time), y(v.proc), color)
+	states[v.proc] = state{v.time, waitingForSend}
 	return OnOption{}
 }
 

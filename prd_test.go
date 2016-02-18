@@ -5,18 +5,6 @@ import (
 	"os"
 )
 
-const (
-	goingForAWalk Proces = iota
-	AliceGettingReady
-	BobGettingReady
-)
-
-const (
-	a Channel = iota
-	b
-	c
-)
-
 // go test 2> out.svg
 func Example() {
 	PrdStart(800, 500)
@@ -26,6 +14,9 @@ func Example() {
 	At(1, goingForAWalk).Creates(AliceGettingReady, "Alice getting ready")
 	At(2, goingForAWalk).Creates(BobGettingReady, "Bob getting ready")
 
+	At(3, goingForAWalk).WantsToReceiveOn(a)
+	At(5, BobGettingReady).WantsToSendOn(a, "data")
+
 	// situatie 1: receive moet wachten op een zender
 
 	// overweeg toch een WantsToSend("data", a) en WantsToReceive(a)
@@ -33,21 +24,21 @@ func Example() {
 
 	// controleer ook even de imports: `import . prd`
 
-	At(3, AliceGettingReady).WantsToReceiveOn(a)
-	At(3, BobGettingReady).WantsToReceiveOn(a)
+	// At(3, AliceGettingReady).WantsToReceiveOn(a)
+	// At(4, BobGettingReady).WantsToReceiveOn(a)
 
-	At(4, goingForAWalk).WantsToSendOn(a, "data").HandledBy(AliceGettingReady)
+	// At(4, goingForAWalk).WantsToSendOn(a, "data").HandledBy(AliceGettingReady)
 
-	// situatie 2: send moet wachten op een ontvanger
+	// // situatie 2: send moet wachten op een ontvanger
 
-	At(4, AliceGettingReady).WantsToSendOn(b, "data")
-	At(5, BobGettingReady).WantsToSendOn(b, "data")
+	// At(4, AliceGettingReady).WantsToSendOn(b, "data")
+	// At(5, BobGettingReady).WantsToSendOn(b, "data")
 
-	At(7, goingForAWalk).WantsToReceiveOn(b).HandledBy(AliceGettingReady)
+	// At(7, goingForAWalk).WantsToReceiveOn(b).HandledBy(AliceGettingReady)
 
-	At(10, goingForAWalk).Terminates()
-	At(10, BobGettingReady).Terminates()
-	At(10, AliceGettingReady).Terminates()
+	// At(10, goingForAWalk).Terminates()
+	// At(10, BobGettingReady).Terminates()
+	// At(10, AliceGettingReady).Terminates()
 
 	fmt.Fprintln(os.Stderr, PrdEnd().String())
 

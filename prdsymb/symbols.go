@@ -14,11 +14,11 @@ var canvas *svg.SVG
 type mode int
 
 const (
-	wait mode = iota // send and receive
-	postponed
-	immediately
-	active // processes
-	asleep
+	Wait mode = iota // send and receive
+	Postponed
+	Immediately
+	Active // processes
+	Asleep
 )
 
 const (
@@ -33,12 +33,12 @@ const (
 // draw a send symbol (is a little bit like an "s")
 // de basis kan een soort s zijn (een gespiegelde z) en deze kan worden ingevuld
 func Send(m mode, x, y int, color string) {
-	if m == wait || m == immediately {
+	if m == Wait || m == Immediately {
 		canvas.Polygon([]int{x - d + sw, x + d + sw, x + d + sw}, []int{y - d - sw, y - d - sw, y + d - sw},
 			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f",
 				color, size, opacity))
 	}
-	if m == postponed || m == immediately {
+	if m == Postponed || m == Immediately {
 		canvas.Polygon([]int{x - d - sw, x - d - sw, x + d - sw}, []int{y - d + sw, y + d + sw, y + d + sw},
 			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:%s;stroke-opacity:%.2f;fill-opacity:%.2f",
 				"none", size, color, opacity, opacity))
@@ -47,12 +47,12 @@ func Send(m mode, x, y int, color string) {
 
 // Receice draws a receive message symbol
 func Receive(m mode, x, y int, color string) {
-	if m == wait || m == immediately {
+	if m == Wait || m == Immediately {
 		canvas.Polyline([]int{x - d - sw, x - d - sw, x + d + sw}, []int{y + d + sw, y - d - sw, y - d - sw},
 			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
 				color, size, opacity))
 	}
-	if m == postponed || m == immediately {
+	if m == Postponed || m == Immediately {
 		canvas.Square(x-d+3*sw, y-d+3*sw, 2*d-2*sw,
 			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:%s;stroke-opacity:%.2f;fill-opacity:%.2f",
 				"none", size, color, opacity, opacity))
@@ -61,10 +61,10 @@ func Receive(m mode, x, y int, color string) {
 
 // Process draws a horizontal process line
 func Process(m mode, x1, x2, y int) {
-	if m == active {
+	if m == Active {
 		canvas.Line(x1+d+4*sw, y, x2-d-4*sw, y, fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
 			"black", size, opacity))
-	} else if m == asleep {
+	} else if m == Asleep {
 		canvas.Line(x1+d+4*sw, y, x2-d-4*sw, y, fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round;stroke-dasharray:5, 5",
 			"black", size, opacity))
 	}
