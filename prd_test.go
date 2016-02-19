@@ -6,64 +6,59 @@ import (
 )
 
 const (
-	goingForAWalk Proces = iota
-	AliceGettingReady
-	BobGettingReady
+	procesA Proces = iota
+	procesB
+	procesC
 )
 
 const (
-	a Channel = iota
-	b
-	c
+	channelA Channel = iota
+	channelB
 )
 
 // go test 2> out.svg
 func Example() {
 	PrdStart(800, 500)
 
-	At(0, goingForAWalk).Starts("going for a Walk")
+	LabelChannel(channelA, "a")
+	LabelChannel(channelB, "b")
 
-	At(1, goingForAWalk).Creates(AliceGettingReady, "Alice getting ready")
-	At(2, goingForAWalk).Creates(BobGettingReady, "Bob getting ready")
+	At(0, procesA).Starts("A")
 
-	// situatie 1: receive moet wachten op een zender
+	At(1, procesA).Creates(procesB, "B")
+	At(2, procesA).Creates(procesC, "C")
 
-	// overweeg toch een WantsToSend("data", a) en WantsToReceive(a)
-	// of WantsToSendOn(a, "data") en WantsToReceiveOn(a)
+	At(3, procesA).WantsToReceiveOn(channelA)
+	At(5, procesC).WantsToSendOn(channelA, "data")
 
-	// controleer ook even de imports: `import . prd`
+	At(6, procesA).WantsToReceiveOn(channelA)
 
-	At(3, AliceGettingReady).WantsToReceive().OnChannel(a)
-	At(3, BobGettingReady).WantsToReceive().OnChannel(a)
+	At(8, procesB).WantsToSendOn(channelA, "data")
 
-	At(4, goingForAWalk).WantsToSend("true").OnChannel(a).HandledBy(AliceGettingReady)
+	At(6, procesC).WantsToSendOn(channelB, "data")
+	At(10, procesB).WantsToReceiveOn(channelB)
 
-	// situatie 2: send moet wachten op een ontvanger
+	At(14, procesA).Terminates()
+	At(14, procesB).Terminates()
 
-	At(4, AliceGettingReady).WantsToSend("data").OnChannel(b)
-	At(5, BobGettingReady).WantsToSend("data").OnChannel(b)
+	PrdEnd()
 
-	At(7, goingForAWalk).WantsToReceive().OnChannel(b).HandledBy(AliceGettingReady)
-
-	At(10, goingForAWalk).Terminates()
-	At(10, BobGettingReady).Terminates()
-	At(10, AliceGettingReady).Terminates()
-
-	fmt.Fprintln(os.Stderr, PrdEnd().String())
+	fmt.Fprintln(os.Stdout, Log.String())
+	fmt.Fprintln(os.Stderr, SVG.String())
 
 	// output:
-	// at 0, process "goingForAWalk" starts with label "going for a Walk"
-	// at 1, process "goingForAWalk" creates proces "AliceGettingReady" with label "Alice getting ready"
-	// at 2, process "goingForAWalk" creates proces "BobGettingReady" with label "Bob getting ready"
-	// at 3, process "AliceGettingReady" wants to receive on channel "a"
-	// at 3, process "BobGettingReady" wants to receive on channel "a"
-	// at 4, process "goingForAWalk" wants to send "true" on channel "a"
-	// -  handled by "AliceGettingReady"
-	// at 4, process "AliceGettingReady" wants to send "data" on channel "b"
-	// at 5, process "BobGettingReady" wants to send "data" on channel "b"
-	// at 7, process "goingForAWalk" wants to receive on channel "b"
-	// -  handled by "AliceGettingReady"
-	// at 10, process "goingForAWalk" terminates
-	// at 10, process "BobGettingReady" terminates
-	// at 10, process "AliceGettingReady" terminates
+	// ** at 0, proces "A" starts
+	// at 1, proces "A" creates proces "B"
+	// at 2, proces "A" creates proces "C"
+	// at 3, proces "A" wants to receive on channel "a"
+	// at 5, proces "C" wants to send "data" on channel "a"
+	// - received by proces "A"
+	// at 6, proces "A" wants to receive on channel "a"
+	// at 8, proces "B" wants to send "data" on channel "a"
+	// - received by proces "A"
+	// at 6, proces "C" wants to send "data" on channel "b"
+	// at 10, proces "B" wants to receive on channel "b"
+	// - sent by proces "C"
+	// at 14, proces "A" terminates
+	// at 14, proces "B" terminates
 }
