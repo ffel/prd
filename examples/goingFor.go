@@ -18,7 +18,7 @@ const (
 )
 
 func main() {
-	PrdStart(800, 500)
+	PrdStart(800, 250)
 
 	LabelChannel(gotReady, "got ready")
 
@@ -33,7 +33,8 @@ func main() {
 
 	At(20, goingForAWalk).Terminates()
 
-	// need to fix output of report
+	PrdEnd()
 
-	fmt.Fprintln(os.Stderr, PrdEnd().String())
+	fmt.Fprintln(os.Stderr, Log.String())
+	fmt.Println(SVG.String())
 }

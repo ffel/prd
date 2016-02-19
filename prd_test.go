@@ -41,8 +41,10 @@ func Example() {
 	At(14, procesA).Terminates()
 	At(14, procesB).Terminates()
 
-	// send svg to stderr
-	fmt.Fprintln(os.Stderr, PrdEnd().String())
+	PrdEnd()
+
+	fmt.Fprintln(os.Stdout, Log.String())
+	fmt.Fprintln(os.Stderr, SVG.String())
 
 	// output:
 	// ** at 0, proces "A" starts
