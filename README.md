@@ -7,9 +7,9 @@ This is work in progress. Development is done in branch `dev`.
 
 See examples in `examples`:
 
-![](examples/goingFor.svg)
+![](https://raw.githubusercontent.com/ffel/prd/master/examples/goingFor.svg)
 
 And here is the process diagram from `prd_test.go`:
 
-![](out.svg)
+![](https://raw.githubusercontent.com/ffel/prd/master/out.svg)
 

@@ -1,7 +1,7 @@
 Example PRoces Diagrams
 =======================
 
-![](goingFor.svg)
+![](https://raw.githubusercontent.com/ffel/prd/master/examples/goingFor.svg)
 
 is produced by the following Go code:
 
