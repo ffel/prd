@@ -5,24 +5,38 @@ import (
 	"os"
 )
 
+const (
+	procesA Proces = iota
+	procesB
+	procesC
+)
+
+const (
+	channelA Channel = iota
+	channelB
+)
+
 // go test 2> out.svg
 func Example() {
 	PrdStart(800, 500)
 
-	At(0, procesA).Starts("proces A")
+	LabelChannel(channelA, "a")
+	LabelChannel(channelB, "b")
 
-	At(1, procesA).Creates(procesB, "proces B")
-	At(2, procesA).Creates(procesC, "proces C")
+	At(0, procesA).Starts("A")
 
-	At(3, procesA).WantsToReceiveOn(a)
-	At(5, procesC).WantsToSendOn(a, "data")
+	At(1, procesA).Creates(procesB, "B")
+	At(2, procesA).Creates(procesC, "C")
 
-	At(6, procesA).WantsToReceiveOn(a)
+	At(3, procesA).WantsToReceiveOn(channelA)
+	At(5, procesC).WantsToSendOn(channelA, "data")
 
-	At(8, procesB).WantsToSendOn(a, "data")
+	At(6, procesA).WantsToReceiveOn(channelA)
 
-	At(6, procesC).WantsToSendOn(b, "data")
-	At(10, procesB).WantsToReceiveOn(b)
+	At(8, procesB).WantsToSendOn(channelA, "data")
+
+	At(6, procesC).WantsToSendOn(channelB, "data")
+	At(10, procesB).WantsToReceiveOn(channelB)
 
 	At(14, procesA).Terminates()
 	At(14, procesB).Terminates()
@@ -31,13 +45,18 @@ func Example() {
 	fmt.Fprintln(os.Stderr, PrdEnd().String())
 
 	// output:
-	// at 0, process "procesA" starts with label "proces A"
-	// at 1, process "procesA" creates proces "procesB" with label "proces B"
-	// at 2, process "procesA" creates proces "procesC" with label "proces C"
-	// at 3, process "procesA" wants to receive on channel "a"
-	// at 5, process "procesC" wants to send "data" on channel "a"
-	// - received by process "procesA"
-	// at 6, process "procesA" wants to receive on channel "a"
-	// at 8, process "procesB" wants to send "data" on channel "a"
-	// - received by process "procesA"
+	// ** at 0, proces "A" starts
+	// at 1, proces "A" creates proces "B"
+	// at 2, proces "A" creates proces "C"
+	// at 3, proces "A" wants to receive on channel "a"
+	// at 5, proces "C" wants to send "data" on channel "a"
+	// - received by proces "A"
+	// at 6, proces "A" wants to receive on channel "a"
+	// at 8, proces "B" wants to send "data" on channel "a"
+	// - received by proces "A"
+	// at 6, proces "C" wants to send "data" on channel "b"
+	// at 10, proces "B" wants to receive on channel "b"
+	// - sent by proces "C"
+	// at 14, proces "A" terminates
+	// at 14, proces "B" terminates
 }

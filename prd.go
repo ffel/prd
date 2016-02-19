@@ -35,6 +35,8 @@ type state struct {
 }
 
 var states map[Proces]state
+var procLabels map[Proces]string
+var chanLabels map[Channel]string
 
 func x(val int) int {
 	return offsetX + (val-1)*deltaX
@@ -46,6 +48,8 @@ func y(val Proces) int {
 
 func PrdStart(width, height int) {
 	states = make(map[Proces]state)
+	procLabels = make(map[Proces]string)
+	chanLabels = make(map[Channel]string)
 	prdsymb.Start(width, height)
 }
 
@@ -53,8 +57,17 @@ func PrdEnd() *bytes.Buffer {
 	return prdsymb.End()
 }
 
+func LabelChannel(c Channel, lab string) {
+	chanLabels[c] = lab
+}
+
 func At(time int, proc Proces) ProcesInfo {
-	fmt.Printf("at %d, process %q", time, proc)
+	if lab, ok := procLabels[proc]; ok {
+		fmt.Printf("at %d, proces %q", time, lab)
+	} else {
+		fmt.Printf("*")
+	}
+
 	return ProcesInfo{time, proc}
 }
 
@@ -64,13 +77,15 @@ type ProcesInfo struct {
 }
 
 func (info ProcesInfo) Starts(label string) {
-	fmt.Printf(" starts with label %q\n", label)
+	fmt.Printf("* at %d, proces %q starts\n", info.time, label)
+	procLabels[info.proc] = label
 	states[info.proc] = state{since: info.time, pstate: active}
 	prdsymb.Label(x(info.time), y(info.proc), label)
 }
 
 func (info ProcesInfo) Creates(proc Proces, label string) {
-	fmt.Printf(" creates proces %q with label %q\n", proc, label)
+	fmt.Printf(" creates proces %q\n", label)
+	procLabels[proc] = label
 	states[proc] = state{since: info.time, pstate: active}
 	prdsymb.Label(x(info.time), y(proc), label)
 	prdsymb.Create(x(info.time), y(info.proc), y(proc))
@@ -79,7 +94,7 @@ func (info ProcesInfo) Creates(proc Proces, label string) {
 // WantsToReceive marks proces info.proc as to want receive on channel c
 // If another proces is to send on c, the receive will actually happen
 func (info ProcesInfo) WantsToReceiveOn(c Channel) OnOption {
-	fmt.Printf(" wants to receive on channel %q\n", c)
+	fmt.Printf(" wants to receive on channel %q\n", chanLabels[c])
 	// fmt.Printf("-R- since %d, state %q, channel: %q, now %d\n", states[info.proc].since, states[info.proc].pstate, states[info.proc].channel, info.time)
 
 	// draw line
@@ -90,7 +105,7 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) OnOption {
 	prdsymb.Receive(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
 	if sproc, ok := findPresentSender(c); ok {
-		fmt.Printf("- sent by proces %q\n", sproc)
+		fmt.Printf("- sent by proces %q\n", procLabels[sproc])
 
 		prdsymb.Send(prdsymb.Postponed, x(info.time), y(sproc), channelColor(c))
 		prdsymb.Receive(prdsymb.Postponed, x(info.time), y(info.proc), channelColor(c))
@@ -109,7 +124,7 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) OnOption {
 // WantsToSendOn marks proces info.proc as to want send on channel c.
 // In another proces is to receive on c, the send will actually happen
 func (info ProcesInfo) WantsToSendOn(c Channel, data string) OnOption {
-	fmt.Printf(" wants to send %q on channel %q\n", data, c)
+	fmt.Printf(" wants to send %q on channel %q\n", data, chanLabels[c])
 	// fmt.Printf("-S- since %d, state %q, channel: %q, now %d\n", states[info.proc].since, states[info.proc].pstate, states[info.proc].channel, info.time)
 
 	// draw proces lone for info.proc
@@ -120,7 +135,7 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) OnOption {
 	prdsymb.Send(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
 	if rproc, ok := findPresentReceiver(c); ok {
-		fmt.Printf("- received by proces %q\n", rproc)
+		fmt.Printf("- received by proces %q\n", procLabels[rproc])
 
 		prdsymb.Receive(prdsymb.Postponed, x(info.time), y(rproc), channelColor(c))
 		prdsymb.Send(prdsymb.Postponed, x(info.time), y(info.proc), channelColor(c))

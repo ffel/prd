@@ -60,11 +60,11 @@
 <line x1="0" y1="475" x2="800" y2="475" />
 <line x1="0" y1="500" x2="800" y2="500" />
 </g>
-<text x="56" y="27" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">proces A</text>
-<text x="86" y="67" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">proces B</text>
+<text x="56" y="27" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">A</text>
+<text x="86" y="67" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">B</text>
 <line x1="100" y1="39" x2="100" y2="51" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
 <circle cx="100" cy="65" r="4" style="fill-opacity:0.30;"/>
-<text x="116" y="107" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">proces C</text>
+<text x="116" y="107" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">C</text>
 <line x1="130" y1="39" x2="130" y2="91" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
 <circle cx="130" cy="105" r="4" style="fill-opacity:0.30;"/>
 <line x1="84" y1="25" x2="146" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
