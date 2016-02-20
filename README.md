@@ -1,9 +1,13 @@
 prd - PRoces Diagrams
 =====================
 
-Process Diagrams for concurrent processes that communicate via channels.
+Process Diagrams for concurrent processes that communicate via
+blocking channels.
 
 This is work in progress. Development is done in branch `dev`.
+
+Examples
+========
 
 Going for a Walk
 ----------------
@@ -12,7 +16,7 @@ The following *proces diagram* is an analysis of the [daily walk trivial
 concurrency
 exercise](http://whipperstacker.com/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher/).
 
-![](goingFor.png)
+![](examples/goingFor.png)
 
 See `examples/goingFor.go` for the exact code. We've tried hard to make
 the code readable:
