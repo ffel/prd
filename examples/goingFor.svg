@@ -3,16 +3,17 @@
 <svg width="800" height="250"
      xmlns="http://www.w3.org/2000/svg"
      xmlns:xlink="http://www.w3.org/1999/xlink">
+<rect x="0" y="0" width="800" height="250" style="fill:rgb(253,253,253)"/>
 <text x="106" y="27" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">going for a walk</text>
-<text x="136" y="107" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">Alice getting ready</text>
-<line x1="150" y1="39" x2="150" y2="91" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
-<circle cx="150" cy="105" r="4" style="fill-opacity:0.30;"/>
-<text x="166" y="67" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">Bob getting ready</text>
-<line x1="180" y1="39" x2="180" y2="51" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
-<circle cx="180" cy="65" r="4" style="fill-opacity:0.30;"/>
+<text x="136" y="67" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">Bob getting ready</text>
+<line x1="150" y1="39" x2="150" y2="51" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
+<circle cx="150" cy="65" r="4" style="fill-opacity:0.30;"/>
+<text x="166" y="107" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">Alice getting ready</text>
+<line x1="180" y1="39" x2="180" y2="91" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
+<circle cx="180" cy="105" r="4" style="fill-opacity:0.30;"/>
 <line x1="134" y1="25" x2="196" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 <polyline points="199,36 199,14 221,14" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-<line x1="194" y1="65" x2="286" y2="65" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<line x1="164" y1="65" x2="286" y2="65" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 <polygon points="289,56 289,76 309,76" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
 <rect x="293" y="18" width="18" height="18" style="stroke:none;stroke-width:2;fill:red;stroke-opacity:0.30;fill-opacity:0.30"/>
 <polygon points="291,54 311,54 311,74" style="stroke:none;stroke-width:2;fill:red;stroke-opacity:0.30;fill-opacity:0.30"/>
@@ -20,12 +21,45 @@
 <line x1="224" y1="25" x2="286" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
 <line x1="314" y1="25" x2="316" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 <polyline points="319,36 319,14 341,14" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-<line x1="164" y1="105" x2="466" y2="105" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-<polygon points="469,96 469,116 489,116" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
-<rect x="473" y="18" width="18" height="18" style="stroke:none;stroke-width:2;fill:red;stroke-opacity:0.30;fill-opacity:0.30"/>
-<polygon points="471,94 491,94 491,114" style="stroke:none;stroke-width:2;fill:red;stroke-opacity:0.30;fill-opacity:0.30"/>
-<line x1="480" y1="39" x2="480" y2="91" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-<line x1="344" y1="25" x2="466" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
-<line x1="494" y1="25" x2="706" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<line x1="194" y1="105" x2="376" y2="105" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<polygon points="379,96 379,116 399,116" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
+<rect x="383" y="18" width="18" height="18" style="stroke:none;stroke-width:2;fill:red;stroke-opacity:0.30;fill-opacity:0.30"/>
+<polygon points="381,94 401,94 401,114" style="stroke:none;stroke-width:2;fill:red;stroke-opacity:0.30;fill-opacity:0.30"/>
+<line x1="390" y1="39" x2="390" y2="91" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<line x1="344" y1="25" x2="376" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
+<text x="406" y="147" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">arm alarm</text>
+<line x1="420" y1="39" x2="420" y2="131" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
+<circle cx="420" cy="145" r="4" style="fill-opacity:0.30;"/>
+<text x="436" y="187" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">Bob puts on shoes</text>
+<line x1="450" y1="39" x2="450" y2="171" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
+<circle cx="450" cy="185" r="4" style="fill-opacity:0.30;"/>
+<text x="466" y="227" style="text-anchor:end;font-size:11px;fill-opacity:0.30;font-family:Verdana">Alice puts on shoes</text>
+<line x1="480" y1="39" x2="480" y2="211" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
+<circle cx="480" cy="225" r="4" style="fill-opacity:0.30;"/>
+<line x1="404" y1="25" x2="496" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<polyline points="499,36 499,14 521,14" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<line x1="464" y1="185" x2="586" y2="185" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<polygon points="589,176 589,196 609,196" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30"/>
+<rect x="593" y="18" width="18" height="18" style="stroke:none;stroke-width:2;fill:blue;stroke-opacity:0.30;fill-opacity:0.30"/>
+<polygon points="591,174 611,174 611,194" style="stroke:none;stroke-width:2;fill:blue;stroke-opacity:0.30;fill-opacity:0.30"/>
+<line x1="600" y1="39" x2="600" y2="171" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<line x1="524" y1="25" x2="586" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
+<line x1="614" y1="25" x2="616" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<polyline points="619,36 619,14 641,14" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<line x1="494" y1="225" x2="676" y2="225" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<polygon points="679,216 679,236 699,236" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30"/>
+<rect x="683" y="18" width="18" height="18" style="stroke:none;stroke-width:2;fill:blue;stroke-opacity:0.30;fill-opacity:0.30"/>
+<polygon points="681,214 701,214 701,234" style="stroke:none;stroke-width:2;fill:blue;stroke-opacity:0.30;fill-opacity:0.30"/>
+<line x1="690" y1="39" x2="690" y2="211" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<line x1="644" y1="25" x2="676" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
+<line x1="704" y1="25" x2="706" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<polyline points="709,36 709,14 731,14" style="stroke:green;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<line x1="434" y1="145" x2="766" y2="145" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<polygon points="769,136 769,156 789,156" style="stroke:green;stroke-width:2;fill:none;stroke-opacity:0.30"/>
+<rect x="773" y="18" width="18" height="18" style="stroke:none;stroke-width:2;fill:green;stroke-opacity:0.30;fill-opacity:0.30"/>
+<polygon points="771,134 791,134 791,154" style="stroke:none;stroke-width:2;fill:green;stroke-opacity:0.30;fill-opacity:0.30"/>
+<line x1="780" y1="39" x2="780" y2="131" style="stroke:green;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+<line x1="734" y1="25" x2="766" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round;stroke-dasharray:5, 5"/>
+<line x1="794" y1="25" x2="826" y2="25" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 </svg>
 
