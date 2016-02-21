@@ -116,7 +116,7 @@ func Start(width, height int) {
 	buffer = &bytes.Buffer{}
 	canvas = svg.New(buffer)
 	canvas.Start(width, height)
-	canvas.Rect(0, 0, width, height, "fill:rgb(253,253,253)")
+	// canvas.Rect(0, 0, width, height, "fill:rgb(253,253,253)")
 	// canvas.Grid(0, 0, width, height, 25, "stroke:lightgray")
 }
 

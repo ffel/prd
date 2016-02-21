@@ -18,10 +18,11 @@ const (
 const (
 	morsel Channel = iota
 	empty
+	quit
 )
 
 func main() {
-	PrdStart(800, 250)
+	PrdStart(24, 5)
 
 	LabelChannel(morsel, "morsel")
 
@@ -34,6 +35,8 @@ func main() {
 	At(5, eatingTapas).Creates(bobEating, "Bob")
 	At(6, eatingTapas).Creates(charlieEating, "Charlie")
 
+	At(7, eatingTapas).WantsToReceiveOn(empty)
+
 	// both chorizo as well as olivas are willing to send
 	// so, we have to decide which
 	At(8, bobEating).AsServedByProces(chorizo).WantsToReceiveOn(morsel)
@@ -43,10 +46,15 @@ func main() {
 	At(12, olivas).WantsToSendOn(morsel, "a last bite")
 
 	At(14, bobEating).AsServedByProces(olivas).WantsToReceiveOn(morsel)
-	At(15, olivas).WantsToReceiveOn(empty)
+	At(15, olivas).WantsToSendOn(empty, "done")
+
+	At(16, eatingTapas).WantsToReceiveOn(empty)
 
 	At(17, charlieEating).WantsToReceiveOn(morsel)
-	At(18, chorizo).WantsToReceiveOn(empty)
+	At(18, chorizo).WantsToSendOn(empty, "done")
+
+	// closes???, X als mesg?
+	At(19, eatingTapas).WantsToSendOn(quit, "")
 
 	At(24, eatingTapas).Terminates()
 

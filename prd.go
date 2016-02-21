@@ -51,11 +51,11 @@ func y(val Proces) int {
 	return offsetY + int(val)*deltaY
 }
 
-func PrdStart(width, height int) {
+func PrdStart(totalTime, nrProceses int) {
 	states = make(map[Proces]state)
 	procLabels = make(map[Proces]string)
 	chanLabels = make(map[Channel]string)
-	prdsymb.Start(width, height)
+	prdsymb.Start(x(totalTime+1), y(Proces(nrProceses)+1))
 	Log = new(bytes.Buffer) // hah! a meaningful use of new()
 }
 

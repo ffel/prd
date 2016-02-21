@@ -18,7 +18,7 @@ const (
 
 // go test 2> out.svg
 func Example() {
-	PrdStart(800, 500)
+	PrdStart(13, 3)
 
 	LabelChannel(channelA, "a")
 	LabelChannel(channelB, "b")

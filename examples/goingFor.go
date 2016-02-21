@@ -23,7 +23,7 @@ const (
 )
 
 func main() {
-	PrdStart(800, 250)
+	PrdStart(24, 6)
 
 	LabelChannel(gotReady, "got ready")
 	LabelChannel(armedAlarm, "armed alarm")
