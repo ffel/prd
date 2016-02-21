@@ -4,6 +4,7 @@ package prd
 import (
 	"bytes"
 	"fmt"
+	"strconv"
 
 	"github.com/ffel/prd/prdsymb"
 )
@@ -42,6 +43,8 @@ type state struct {
 var states map[Proces]state
 var procLabels map[Proces]string
 var chanLabels map[Channel]string
+var timeLabels map[int]bool
+var labely int
 
 func x(val int) int {
 	return offsetX + (val-1)*deltaX
@@ -55,7 +58,9 @@ func PrdStart(totalTime, nrProceses int) {
 	states = make(map[Proces]state)
 	procLabels = make(map[Proces]string)
 	chanLabels = make(map[Channel]string)
-	prdsymb.Start(x(totalTime+1), y(Proces(nrProceses)+1))
+	timeLabels = make(map[int]bool)
+	labely = nrProceses
+	prdsymb.Start(x(totalTime+1), y(Proces(labely+1)))
 	Log = new(bytes.Buffer) // hah! a meaningful use of new()
 }
 
@@ -63,6 +68,10 @@ func PrdStart(totalTime, nrProceses int) {
 // 	return prdsymb.End()
 // }
 func PrdEnd() {
+	for k, _ := range timeLabels {
+		prdsymb.Label(x(k)+2*deltaX/3, y(Proces(labely)), strconv.Itoa(k))
+	}
+
 	SVG = prdsymb.End()
 }
 
@@ -71,6 +80,8 @@ func LabelChannel(c Channel, lab string) {
 }
 
 func At(time int, proc Proces) ProcesInfo {
+	timeLabels[time] = true // record time
+
 	if lab, ok := procLabels[proc]; ok {
 		fmt.Fprintf(Log, "at %d, proces %q", time, lab)
 	} else {
