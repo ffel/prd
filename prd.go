@@ -10,10 +10,11 @@ import (
 )
 
 var (
-	offsetX int = 150
-	offsetY int = 25
-	deltaX  int = 30
-	deltaY  int = 40
+	offsetX     int = 150
+	offsetY     int = 25
+	deltaX      int = 30
+	deltaY      int = 40
+	deltaSelect int = 4
 )
 
 var Log *bytes.Buffer
@@ -64,9 +65,6 @@ func PrdStart(totalTime, nrProceses int) {
 	Log = new(bytes.Buffer) // hah! a meaningful use of new()
 }
 
-// func PrdEnd() *bytes.Buffer {
-// 	return prdsymb.End()
-// }
 func PrdEnd() {
 	for k, _ := range timeLabels {
 		prdsymb.Label(x(k)+2*deltaX/3, y(Proces(labely)), strconv.Itoa(k))
@@ -98,6 +96,11 @@ type ProcesInfo struct {
 	servedproc Proces // in case there are multiple helpers
 }
 
+type AndInfo struct {
+	ProcesInfo
+	nr int
+}
+
 func (info ProcesInfo) Starts(label string) {
 	fmt.Fprintf(Log, "* at %d, proces %q starts\n", info.time, label)
 	procLabels[info.proc] = label
@@ -113,11 +116,23 @@ func (info ProcesInfo) Creates(proc Proces, label string) {
 	prdsymb.Create(x(info.time), y(info.proc), y(proc))
 }
 
+func (and AndInfo) AndToReceiveOn(c Channel) AndInfo {
+	and.nr++
+
+	fmt.Fprintf(Log, "- and proces %q wants to receive on channel %q\n",
+		procLabels[and.proc], chanLabels[c])
+
+	prdsymb.Receive(prdsymb.Wait,
+		x(and.time)-and.nr*deltaSelect,
+		y(and.proc)-and.nr*deltaSelect, channelColor(c))
+
+	return and
+}
+
 // WantsToReceive marks proces info.proc as to want receive on channel c
 // If another proces is to send on c, the receive will actually happen
-func (info ProcesInfo) WantsToReceiveOn(c Channel) {
+func (info ProcesInfo) WantsToReceiveOn(c Channel) AndInfo {
 	fmt.Fprintf(Log, " wants to receive on channel %q\n", chanLabels[c])
-	// fmt.Fprintf(Log,"-R- since %d, state %q, channel: %q, now %d\n", states[info.proc].since, states[info.proc].pstate, states[info.proc].channel, info.time)
 
 	// draw line
 	if states[info.proc].pstate == active {
@@ -149,11 +164,26 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) {
 	} else {
 		states[info.proc] = state{since: info.time, pstate: waitingForReceive, channel: c}
 	}
+
+	return AndInfo{info, 0}
+}
+
+func (and AndInfo) AndToSendOn(c Channel, data string) AndInfo {
+	and.nr++
+
+	fmt.Fprintf(Log, "- and proces %q wants to send %q on channel %q\n",
+		procLabels[and.proc], data, chanLabels[c])
+
+	prdsymb.Send(prdsymb.Wait,
+		x(and.time)-and.nr*deltaSelect,
+		y(and.proc)-and.nr*deltaSelect, channelColor(c))
+
+	return and
 }
 
 // WantsToSendOn marks proces info.proc as to want send on channel c.
 // In another proces is to receive on c, the send will actually happen
-func (info ProcesInfo) WantsToSendOn(c Channel, data string) {
+func (info ProcesInfo) WantsToSendOn(c Channel, data string) AndInfo {
 	fmt.Fprintf(Log, " wants to send %q on channel %q\n", data, chanLabels[c])
 	// fmt.Fprintf(Log,"-S- since %d, state %q, channel: %q, now %d\n", states[info.proc].since, states[info.proc].pstate, states[info.proc].channel, info.time)
 
@@ -187,6 +217,8 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) {
 	} else {
 		states[info.proc] = state{since: info.time, pstate: waitingForSend, channel: c}
 	}
+
+	return AndInfo{info, 0}
 }
 
 // AsServedByProces can specify proces that will serve proces in
