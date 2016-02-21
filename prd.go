@@ -150,7 +150,7 @@ func addWaitState(proc Proces, nstate processtate, channel Channel) {
 
 	states[proc] = update
 
-	fmt.Fprintf(Log, "****\n%#v\n****\n", states[proc])
+	// fmt.Fprintf(Log, "****\n%#v\n****\n", states[proc])
 }
 
 // WantsToReceive marks proces info.proc as to want receive on channel c
@@ -165,6 +165,7 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) AndInfo {
 	// draw receive symbol
 	prdsymb.Receive(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
+	// iets dergelijks moeten we ook in AndToReceiveOn krijgen
 	if sproc, ok := findWaiting(forSend, c); ok {
 		// check if AsServedByProces is added
 		if info.servedby {
@@ -218,6 +219,28 @@ func (and AndInfo) AndToSendOn(c Channel, data string) AndInfo {
 		x(and.time)-and.nr*deltaSelect,
 		y(and.proc)-and.nr*deltaSelect, channelColor(c))
 
+	/*
+		Het probleem waar we nu tegenaan lopen is:
+
+		-	de WantsToSendOn kan al een receiver hebben gevonden,
+			zodat we na de addWaitState de state weer active is
+
+			kunnen we hier voor checken
+
+		-	als er nu een extra sends on channel wordt toegevoegd,
+			waarvoor al een ontvanger is, dan is deze toevoeging te
+			laat omdat WantsToSend al is uitgevoerd.
+
+		We moeten voor de extra Send eerst nagaan of de state al niet
+		active geworden is, omdat een eerdere toevoeging ook een
+		ontvanger heeft gevonden.
+
+		We moeten nu op zoek naar een potentiele ontvanger die iets
+		van c wil ontvangen.
+
+		Mogelijk is er nog een issue met AsServedBy omdat deze igv
+		select meerdere smaken moet aanbieden.
+	*/
 	addWaitState(and.proc, forSend, c)
 
 	return and
@@ -236,6 +259,7 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) AndInfo {
 	// draw send symbol
 	prdsymb.Send(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
+	// iets dergelijks moeten we ook in AndToReceiveOn krijgen
 	if rproc, ok := findWaiting(forReceive, c); ok {
 		// check if AsServedByProces is added
 		if info.servedby {
