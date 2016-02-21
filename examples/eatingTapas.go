@@ -13,6 +13,7 @@ const (
 	olivas
 	bobEating
 	charlieEating
+	closingQuit
 )
 
 const (
@@ -22,7 +23,7 @@ const (
 )
 
 func main() {
-	PrdStart(24, 5)
+	PrdStart(25, 6)
 
 	LabelChannel(morsel, "morsel")
 	LabelChannel(empty, "empty")
@@ -59,7 +60,6 @@ func main() {
 		WantsToReceiveOn(morsel).
 		AndToReceiveOn(allDone)
 	At(15, olivas).WantsToSendOn(empty, "done")
-	// At(18, bobEating).WantsToReceiveOn(morsel) //.AndToReceiveOn(allDone)
 
 	At(16, eatingTapas).WantsToReceiveOn(empty)
 
@@ -67,14 +67,23 @@ func main() {
 		WantsToReceiveOn(morsel).AndToReceiveOn(allDone)
 	At(18, chorizo).WantsToSendOn(empty, "done")
 
-	// At(18, bobEating).WantsToReceiveOn(morsel).AndToReceiveOn(allDone)
+	/*
+		Generic syntax for a closed channel:
 
-	// closes???, X als mesg?
-	At(19, eatingTapas).WantsToSendOn(allDone, "")
+		-	The proces that closes a channel sort of starts a new
+			proces that immediately serves any listener on the closed
+			channel.
 
-	// At(22, charlieEating).WantsToReceiveOn(morsel).AndToReceiveOn(allDone)
+		Functionally, a closed channel works like this.
+	*/
+	At(19, eatingTapas).Creates(closingQuit, "quit")
+	At(20, closingQuit).WantsToSendOn(allDone, "x")
 
-	At(24, eatingTapas).Terminates()
+	At(21, bobEating).WantsToReceiveOn(morsel).AndToReceiveOn(allDone)
+
+	At(24, charlieEating).WantsToReceiveOn(morsel).AndToReceiveOn(allDone)
+
+	At(25, eatingTapas).Terminates()
 
 	PrdEnd()
 
