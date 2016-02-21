@@ -30,15 +30,21 @@ type processtate int
 
 const (
 	active processtate = iota
-	waitingForSend
-	waitingForReceive
+	waiting
+	forSend
+	forReceive
 	terminated
 )
 
 type state struct {
-	since   int
-	pstate  processtate
-	channel Channel // in case of waiting, which channel
+	since     int
+	pstate    processtate // active, waiting or terminated
+	waitstate []wstate    // if waiting
+}
+
+type wstate struct {
+	state   processtate // forSend, forReceive
+	channel Channel
 }
 
 var states map[Proces]state
@@ -126,7 +132,25 @@ func (and AndInfo) AndToReceiveOn(c Channel) AndInfo {
 		x(and.time)-and.nr*deltaSelect,
 		y(and.proc)-and.nr*deltaSelect, channelColor(c))
 
+	addWaitState(and.proc, forReceive, c)
+
 	return and
+}
+
+func addWaitState(proc Proces, nstate processtate, channel Channel) {
+
+	wstates := append(states[proc].waitstate,
+		wstate{state: nstate, channel: channel})
+
+	update := state{
+		since:     states[proc].since,
+		pstate:    states[proc].pstate,
+		waitstate: wstates,
+	}
+
+	states[proc] = update
+
+	fmt.Fprintf(Log, "****\n%#v\n****\n", states[proc])
 }
 
 // WantsToReceive marks proces info.proc as to want receive on channel c
@@ -141,12 +165,12 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) AndInfo {
 	// draw receive symbol
 	prdsymb.Receive(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
-	if sproc, ok := findPresentSender(c); ok {
+	if sproc, ok := findWaiting(forSend, c); ok {
 		// check if AsServedByProces is added
 		if info.servedby {
 			sproc = info.servedproc
 
-			if states[sproc].pstate != waitingForSend {
+			if !checkWaitingProces(sproc, c, forSend) {
 				fmt.Fprintf(Log, "WARNING: proces %s not waiting to send (%q)\n",
 					procLabels[sproc], states[sproc].pstate)
 			}
@@ -162,10 +186,26 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) AndInfo {
 		states[info.proc] = state{since: info.time, pstate: active}
 		states[sproc] = state{since: info.time, pstate: active}
 	} else {
-		states[info.proc] = state{since: info.time, pstate: waitingForReceive, channel: c}
+		states[info.proc] = state{
+			since:     info.time,
+			pstate:    waiting,
+			waitstate: []wstate{{state: forReceive, channel: c}},
+		}
 	}
 
 	return AndInfo{info, 0}
+}
+
+func checkWaitingProces(proc Proces, ch Channel, state processtate) bool {
+	if states[proc].pstate != waiting {
+		return false
+	}
+	for _, w := range states[proc].waitstate {
+		if w.channel == ch && w.state == forSend {
+			return true
+		}
+	}
+	return false
 }
 
 func (and AndInfo) AndToSendOn(c Channel, data string) AndInfo {
@@ -177,6 +217,8 @@ func (and AndInfo) AndToSendOn(c Channel, data string) AndInfo {
 	prdsymb.Send(prdsymb.Wait,
 		x(and.time)-and.nr*deltaSelect,
 		y(and.proc)-and.nr*deltaSelect, channelColor(c))
+
+	addWaitState(and.proc, forSend, c)
 
 	return and
 }
@@ -194,12 +236,12 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) AndInfo {
 	// draw send symbol
 	prdsymb.Send(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
-	if rproc, ok := findPresentReceiver(c); ok {
+	if rproc, ok := findWaiting(forReceive, c); ok {
 		// check if AsServedByProces is added
 		if info.servedby {
 			rproc = info.servedproc
 
-			if states[rproc].pstate != waitingForReceive {
+			if !checkWaitingProces(rproc, c, forReceive) {
 				fmt.Fprintf(Log, "WARNING: proces %s not waiting to reveive (%q)\n",
 					procLabels[rproc], states[rproc].pstate)
 			}
@@ -215,7 +257,11 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) AndInfo {
 		states[info.proc] = state{since: info.time, pstate: active}
 		states[rproc] = state{since: info.time, pstate: active}
 	} else {
-		states[info.proc] = state{since: info.time, pstate: waitingForSend, channel: c}
+		states[info.proc] = state{
+			since:     info.time,
+			pstate:    waiting,
+			waitstate: []wstate{{state: forSend, channel: c}},
+		}
 	}
 
 	return AndInfo{info, 0}
@@ -254,24 +300,16 @@ func channelColor(c Channel) string {
 	return "black"
 }
 
-// finds a process that currently wants to receive on channel c
+// finds a process that currently wants to receive or send on channel c
 // returns false in case there is no such Proces
-func findPresentReceiver(c Channel) (Proces, bool) {
+func findWaiting(pstate processtate, c Channel) (Proces, bool) {
 	for v, k := range states {
-		if k.channel == c && k.pstate == waitingForReceive {
-			return v, true
-		}
-	}
-
-	return 0, false
-}
-
-// finds a process that currently wants to send on channel c
-// returns false in case there is no such Proces
-func findPresentSender(c Channel) (Proces, bool) {
-	for v, k := range states {
-		if k.channel == c && k.pstate == waitingForSend {
-			return v, true
+		if k.pstate == waiting {
+			for _, w := range k.waitstate {
+				if w.state == pstate && w.channel == c {
+					return v, true
+				}
+			}
 		}
 	}
 

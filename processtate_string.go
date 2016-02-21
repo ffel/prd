@@ -4,9 +4,9 @@ package prd
 
 import "fmt"
 
-const _processtate_name = "activewaitingForSendwaitingForReceiveterminated"
+const _processtate_name = "activewaitingforSendforReceiveterminated"
 
-var _processtate_index = [...]uint8{0, 6, 20, 37, 47}
+var _processtate_index = [...]uint8{0, 6, 13, 20, 30, 40}
 
 func (i processtate) String() string {
 	if i < 0 || i+1 >= processtate(len(_processtate_index)) {
