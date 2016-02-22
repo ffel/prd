@@ -1,8 +1,8 @@
 prd - PRoces Diagrams
 =====================
 
-Process Diagrams for concurrent processes that communicate via
-blocking channels.
+Process Diagrams for concurrent processes that communicate via blocking
+channels.
 
 This is work in progress. Development is done in branch `dev`.
 
@@ -21,8 +21,8 @@ exercise](http://whipperstacker.com/2015/10/05/3-trivial-concurrency-exercises-f
 See `examples/goingFor.go` for the exact code. We've tried hard to make
 the code readable:
 
-```go
-PrdStart(800, 250)
+``` {.go}
+PrdStart(24, 6)
 
 At(0, goingForAWalk).Starts("going for a walk")
 At(1, goingForAWalk).Creates(BobGettingReady, "Bob getting ready")
@@ -49,3 +49,13 @@ At(24, goingForAWalk).Terminates()
 
 PrdEnd()
 ```
+
+Eating Tapas
+------------
+
+This proces diagram is an analysis of the [eating tapas
+exercise](http://whipperstacker.com/2015/10/05/3-trivial-concurrency-exercises-for-the-confused-newbie-gopher/):
+
+![](examples/eatingTapas.png)
+
+See `examples/eatingTapas.go` for details on how to create this diagram.
