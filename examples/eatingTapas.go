@@ -80,6 +80,7 @@ func main() {
 	At(20, closingQuit).WantsToSendOn(allDone, "x")
 
 	At(21, bobEating).WantsToReceiveOn(morsel).AndToReceiveOn(allDone)
+	At(22, closingQuit).WantsToSendOn(allDone, "x")
 
 	At(24, charlieEating).WantsToReceiveOn(morsel).AndToReceiveOn(allDone)
 
