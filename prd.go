@@ -17,15 +17,6 @@ var (
 	deltaSelect int = 4
 )
 
-var Log *bytes.Buffer
-var SVG *bytes.Buffer
-
-type Proces int
-
-type Channel int
-
-type processtate int
-
 //go:generate stringer -type=processtate
 
 const (
@@ -53,14 +44,16 @@ var chanLabels map[Channel]string
 var timeLabels map[int]bool
 var labely int
 
-func x(val int) int {
-	return offsetX + (val-1)*deltaX
-}
+var Log *bytes.Buffer
+var SVG *bytes.Buffer
 
-func y(val Proces) int {
-	return offsetY + int(val)*deltaY
-}
+type Proces int
 
+type Channel int
+
+type processtate int
+
+// PrdStarts initialises drawing the proces diagram, should be first
 func PrdStart(totalTime, nrProceses int) {
 	states = make(map[Proces]state)
 	procLabels = make(map[Proces]string)
@@ -71,6 +64,7 @@ func PrdStart(totalTime, nrProceses int) {
 	Log = new(bytes.Buffer) // hah! a meaningful use of new()
 }
 
+// PrdEnd completes drawing the proces diagram, should be last
 func PrdEnd() {
 	for k, _ := range timeLabels {
 		prdsymb.Label(x(k)+2*deltaX/3, y(Proces(labely)), strconv.Itoa(k))
@@ -79,10 +73,12 @@ func PrdEnd() {
 	SVG = prdsymb.End()
 }
 
+// LabelChannel is used to give channels a string representation
 func LabelChannel(c Channel, lab string) {
 	chanLabels[c] = lab
 }
 
+// At is the first part of a combined diagram instruction
 func At(time int, proc Proces) ProcesInfo {
 	timeLabels[time] = true // record time
 
@@ -95,6 +91,8 @@ func At(time int, proc Proces) ProcesInfo {
 	return ProcesInfo{time: time, proc: proc}
 }
 
+// ProcesInfo contains info collected by subsequent diagram instruction
+// commands
 type ProcesInfo struct {
 	time       int
 	proc       Proces
@@ -102,11 +100,7 @@ type ProcesInfo struct {
 	servedproc Proces // in case there are multiple helpers
 }
 
-type AndInfo struct {
-	ProcesInfo
-	nr int
-}
-
+// Starts initiates a proces that is already active
 func (info ProcesInfo) Starts(label string) {
 	fmt.Fprintf(Log, "* at %d, proces %q starts\n", info.time, label)
 	procLabels[info.proc] = label
@@ -114,6 +108,7 @@ func (info ProcesInfo) Starts(label string) {
 	prdsymb.Label(x(info.time), y(info.proc), label)
 }
 
+// Creates indicates a new proces
 func (info ProcesInfo) Creates(proc Proces, label string) {
 	fmt.Fprintf(Log, " creates proces %q\n", label)
 	procLabels[proc] = label
@@ -122,35 +117,10 @@ func (info ProcesInfo) Creates(proc Proces, label string) {
 	prdsymb.Create(x(info.time), y(info.proc), y(proc))
 }
 
-func (and AndInfo) AndToReceiveOn(c Channel) AndInfo {
-	and.nr++
-
-	fmt.Fprintf(Log, "- and proces %q wants to receive on channel %q\n",
-		procLabels[and.proc], chanLabels[c])
-
-	prdsymb.Receive(prdsymb.Wait,
-		x(and.time)-and.nr*deltaSelect,
-		y(and.proc)-and.nr*deltaSelect, channelColor(c))
-
-	addWaitState(and.proc, forReceive, c)
-
-	return and
-}
-
-func addWaitState(proc Proces, nstate processtate, channel Channel) {
-
-	wstates := append(states[proc].waitstate,
-		wstate{state: nstate, channel: channel})
-
-	update := state{
-		since:     states[proc].since,
-		pstate:    states[proc].pstate,
-		waitstate: wstates,
-	}
-
-	states[proc] = update
-
-	// fmt.Fprintf(Log, "****\n%#v\n****\n", states[proc])
+// AsServedByProces can specify proces that will serve proces in
+// At.  Used in case there are several process that can serve.
+func (info ProcesInfo) AsServedByProces(proc Proces) ProcesInfo {
+	return ProcesInfo{time: info.time, proc: info.proc, servedby: true, servedproc: proc}
 }
 
 // WantsToReceive marks proces info.proc as to want receive on channel c
@@ -195,55 +165,6 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) AndInfo {
 	}
 
 	return AndInfo{info, 0}
-}
-
-func checkWaitingProces(proc Proces, ch Channel, state processtate) bool {
-	if states[proc].pstate != waiting {
-		return false
-	}
-	for _, w := range states[proc].waitstate {
-		if w.channel == ch && w.state == forSend {
-			return true
-		}
-	}
-	return false
-}
-
-func (and AndInfo) AndToSendOn(c Channel, data string) AndInfo {
-	and.nr++
-
-	fmt.Fprintf(Log, "- and proces %q wants to send %q on channel %q\n",
-		procLabels[and.proc], data, chanLabels[c])
-
-	prdsymb.Send(prdsymb.Wait,
-		x(and.time)-and.nr*deltaSelect,
-		y(and.proc)-and.nr*deltaSelect, channelColor(c))
-
-	/*
-		Het probleem waar we nu tegenaan lopen is:
-
-		-	de WantsToSendOn kan al een receiver hebben gevonden,
-			zodat we na de addWaitState de state weer active is
-
-			kunnen we hier voor checken
-
-		-	als er nu een extra sends on channel wordt toegevoegd,
-			waarvoor al een ontvanger is, dan is deze toevoeging te
-			laat omdat WantsToSend al is uitgevoerd.
-
-		We moeten voor de extra Send eerst nagaan of de state al niet
-		active geworden is, omdat een eerdere toevoeging ook een
-		ontvanger heeft gevonden.
-
-		We moeten nu op zoek naar een potentiele ontvanger die iets
-		van c wil ontvangen.
-
-		Mogelijk is er nog een issue met AsServedBy omdat deze igv
-		select meerdere smaken moet aanbieden.
-	*/
-	addWaitState(and.proc, forSend, c)
-
-	return and
 }
 
 // WantsToSendOn marks proces info.proc as to want send on channel c.
@@ -291,10 +212,64 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) AndInfo {
 	return AndInfo{info, 0}
 }
 
-// AsServedByProces can specify proces that will serve proces in
-// At.
-func (info ProcesInfo) AsServedByProces(proc Proces) ProcesInfo {
-	return ProcesInfo{time: info.time, proc: info.proc, servedby: true, servedproc: proc}
+// AndInfo is used for combined receive or send instructions
+type AndInfo struct {
+	ProcesInfo
+	nr int
+}
+
+// AndToReceiveOn adds another receiver at a point that already
+// has receivers or senders
+func (and AndInfo) AndToReceiveOn(c Channel) AndInfo {
+	and.nr++
+
+	fmt.Fprintf(Log, "- and proces %q wants to receive on channel %q\n",
+		procLabels[and.proc], chanLabels[c])
+
+	prdsymb.Receive(prdsymb.Wait,
+		x(and.time)-and.nr*deltaSelect,
+		y(and.proc)-and.nr*deltaSelect, channelColor(c))
+
+	addWaitState(and.proc, forReceive, c)
+
+	return and
+}
+
+func (and AndInfo) AndToSendOn(c Channel, data string) AndInfo {
+	and.nr++
+
+	fmt.Fprintf(Log, "- and proces %q wants to send %q on channel %q\n",
+		procLabels[and.proc], data, chanLabels[c])
+
+	prdsymb.Send(prdsymb.Wait,
+		x(and.time)-and.nr*deltaSelect,
+		y(and.proc)-and.nr*deltaSelect, channelColor(c))
+
+	/*
+		Het probleem waar we nu tegenaan lopen is:
+
+		-	de WantsToSendOn kan al een receiver hebben gevonden,
+			zodat we na de addWaitState de state weer active is
+
+			kunnen we hier voor checken
+
+		-	als er nu een extra sends on channel wordt toegevoegd,
+			waarvoor al een ontvanger is, dan is deze toevoeging te
+			laat omdat WantsToSend al is uitgevoerd.
+
+		We moeten voor de extra Send eerst nagaan of de state al niet
+		active geworden is, omdat een eerdere toevoeging ook een
+		ontvanger heeft gevonden.
+
+		We moeten nu op zoek naar een potentiele ontvanger die iets
+		van c wil ontvangen.
+
+		Mogelijk is er nog een issue met AsServedBy omdat deze igv
+		select meerdere smaken moet aanbieden.
+	*/
+	addWaitState(and.proc, forSend, c)
+
+	return and
 }
 
 func (info ProcesInfo) Terminates() {
@@ -311,17 +286,34 @@ func (info ProcesInfo) Terminates() {
 	states[info.proc] = state{since: info.time, pstate: terminated}
 }
 
-func channelColor(c Channel) string {
-	switch int(c) % 3 {
-	case 0:
-		return "red"
-	case 1:
-		return "blue"
-	case 2:
-		return "green"
+// checkWaitingProces asserts a proces for waiting to send or receive
+func checkWaitingProces(proc Proces, ch Channel, state processtate) bool {
+	if states[proc].pstate != waiting {
+		return false
+	}
+	for _, w := range states[proc].waitstate {
+		if w.channel == ch && w.state == state {
+			return true
+		}
+	}
+	return false
+}
+
+// addWaitState expands a proces state with another receiver or sender
+func addWaitState(proc Proces, nstate processtate, channel Channel) {
+
+	wstates := append(states[proc].waitstate,
+		wstate{state: nstate, channel: channel})
+
+	update := state{
+		since:     states[proc].since,
+		pstate:    states[proc].pstate,
+		waitstate: wstates,
 	}
 
-	return "black"
+	states[proc] = update
+
+	// fmt.Fprintf(Log, "****\n%#v\n****\n", states[proc])
 }
 
 // finds a process that currently wants to receive or send on channel c
@@ -338,4 +330,27 @@ func findWaiting(pstate processtate, c Channel) (Proces, bool) {
 	}
 
 	return 0, false
+}
+
+// x calculates x pos based upon time value
+func x(val int) int {
+	return offsetX + (val-1)*deltaX
+}
+
+// y calculates y pos based upon proces number
+func y(val Proces) int {
+	return offsetY + int(val)*deltaY
+}
+
+func channelColor(c Channel) string {
+	switch int(c) % 3 {
+	case 0:
+		return "red"
+	case 1:
+		return "blue"
+	case 2:
+		return "green"
+	}
+
+	return "black"
 }
