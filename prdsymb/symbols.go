@@ -66,7 +66,7 @@ func Process(m Mode, x1, x2, y int) {
 		canvas.Line(x1+d+4*sw, y, x2-d-4*sw, y, fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
 			"black", size, opacity))
 	} else if m == Asleep {
-		canvas.Line(x1+d+4*sw, y, x2-d-4*sw, y, fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round;stroke-dasharray:5, 5",
+		canvas.Line(x1+d+4*sw, y, x2-d-4*sw, y, fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round;stroke-dasharray:1, 5",
 			"black", size, opacity))
 	}
 }
@@ -116,7 +116,7 @@ func Start(width, height int) {
 	buffer = &bytes.Buffer{}
 	canvas = svg.New(buffer)
 	canvas.Start(width, height)
-	canvas.Rect(0, 0, width, height, "fill:rgb(253,253,253)")
+	// canvas.Rect(0, 0, width, height, "fill:rgb(253,253,253)")
 	// canvas.Grid(0, 0, width, height, 25, "stroke:lightgray")
 }
 
