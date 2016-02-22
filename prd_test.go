@@ -63,15 +63,27 @@ func Example_select_2() {
 	At(1, procesB).WantsToSendOn(channelA, "data")
 	At(1, procesC).WantsToSendOn(channelB, "data")
 	At(3, procesA).WantsToReceiveOn(channelA).AndToReceiveOn(channelB)
+	// de AndToReceiveOn zou ook moeten nagaan of er een potentiele zender
+	// is (en die is er, nl procesC)
 	At(5, procesA).WantsToReceiveOn(channelA).AndToReceiveOn(channelB)
 
 	PrdEnd()
 
-	fmt.Fprintln(os.Stderr, SVG.String())
+	// fmt.Fprintln(os.Stderr, SVG.String())
 	fmt.Fprintln(os.Stdout, Log.String())
 
 	// output:
-	// boo
+	// ** at 0, proces "A" starts
+	// ** at 0, proces "B" starts
+	// ** at 0, proces "C" starts
+	// at 1, proces "B" wants to send "data" on channel "a"
+	// at 1, proces "C" wants to send "data" on channel "b"
+	// at 3, proces "A" wants to receive on channel "a"
+	// - sent by proces "B"
+	// - and proces "A" wants to receive on channel "b"
+	// at 5, proces "A" wants to receive on channel "a"
+	// - and proces "A" wants to receive on channel "b"
+	// - sent by proces "C"
 }
 
 // go test 2> out.svg
