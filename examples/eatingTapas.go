@@ -43,7 +43,7 @@ func main() {
 	// both chorizo as well as olivas are willing to send
 	// so, we have to decide which
 	At(8, bobEating).
-		AsServedByProces(chorizo).
+		AsServedBy(chorizo, morsel).
 		WantsToReceiveOn(morsel).
 		AndToReceiveOn(allDone)
 
@@ -51,12 +51,12 @@ func main() {
 		WantsToSendOn(morsel, "a bite")
 
 	At(11, charlieEating).
-		AsServedByProces(olivas).
+		AsServedBy(olivas, morsel).
 		WantsToReceiveOn(morsel).
 		AndToReceiveOn(allDone)
 	At(12, olivas).WantsToSendOn(morsel, "a last bite")
 
-	At(14, bobEating).AsServedByProces(olivas).
+	At(14, bobEating).AsServedBy(olivas, morsel).
 		WantsToReceiveOn(morsel).
 		AndToReceiveOn(allDone)
 	At(15, olivas).WantsToSendOn(empty, "done")

@@ -54,17 +54,15 @@ func Example_select_2() {
 	LabelChannel(channelA, "a")
 	LabelChannel(channelB, "b")
 
-	// in de volgende wil je eerst mbv AsServedByProces de blauwe afvangen
-
 	At(0, procesA).Starts("A")
 	At(0, procesB).Starts("B")
 	At(0, procesC).Starts("C")
 
 	At(1, procesB).WantsToSendOn(channelA, "data")
 	At(1, procesC).WantsToSendOn(channelB, "data")
+
 	At(3, procesA).WantsToReceiveOn(channelA).AndToReceiveOn(channelB)
-	// de AndToReceiveOn zou ook moeten nagaan of er een potentiele zender
-	// is (en die is er, nl procesC)
+
 	At(5, procesA).WantsToReceiveOn(channelA).AndToReceiveOn(channelB)
 
 	PrdEnd()
@@ -86,7 +84,51 @@ func Example_select_2() {
 	// - sent by proces "C"
 }
 
-// go test 2> out.svg
+func Example_select_3() {
+	PrdStart(15, 3)
+
+	LabelChannel(channelA, "a")
+	LabelChannel(channelB, "b")
+
+	At(0, procesA).Starts("A")
+	At(0, procesB).Starts("B")
+	At(0, procesC).Starts("C")
+
+	At(1, procesB).WantsToSendOn(channelA, "data")
+	At(1, procesC).WantsToSendOn(channelB, "data")
+
+	// by default, procesA will receive from channelA as this is checked first
+	// to override, we'll need AsServedByProces
+	At(3, procesA).AsServedBy(procesC, channelB).WantsToReceiveOn(channelA).AndToReceiveOn(channelB)
+	At(4, procesC).WantsToSendOn(channelB, "data")
+
+	At(5, procesA).WantsToReceiveOn(channelA).AndToReceiveOn(channelB)
+
+	At(7, procesA).WantsToReceiveOn(channelA).AndToReceiveOn(channelB)
+
+	PrdEnd()
+
+	// fmt.Fprintln(os.Stderr, SVG.String())
+	fmt.Fprintln(os.Stdout, Log.String())
+
+	// output:
+	// ** at 0, proces "A" starts
+	// ** at 0, proces "B" starts
+	// ** at 0, proces "C" starts
+	// at 1, proces "B" wants to send "data" on channel "a"
+	// at 1, proces "C" wants to send "data" on channel "b"
+	// at 3, proces "A" wants to receive on channel "a"
+	// - sent by proces "C"
+	// - and proces "A" wants to receive on channel "b"
+	// at 4, proces "C" wants to send "data" on channel "b"
+	// at 5, proces "A" wants to receive on channel "a"
+	// - sent by proces "B"
+	// - and proces "A" wants to receive on channel "b"
+	// at 7, proces "A" wants to receive on channel "a"
+	// - and proces "A" wants to receive on channel "b"
+	// - sent by proces "C"
+}
+
 func Example() {
 	PrdStart(13, 3)
 
