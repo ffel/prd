@@ -27,6 +27,7 @@ const (
 	terminated
 )
 
+// state is the current state a proces is in
 type state struct {
 	since     int
 	pstate    processtate // active, waiting or terminated
@@ -94,10 +95,11 @@ func At(time int, proc Proces) ProcesInfo {
 // ProcesInfo contains info collected by subsequent diagram instruction
 // commands
 type ProcesInfo struct {
-	time       int
-	proc       Proces
-	servedby   bool   // true if servedproc has been explicitly set
-	servedproc Proces // in case there are multiple helpers
+	time       int     // time set by At
+	proc       Proces  // proces set by At
+	servedBy   bool    // true if AsServedByProces has been explicitly set
+	servedProc Proces  // proces set by AsServedByProces
+	servedChan Channel // channel set by AsServedByProces
 }
 
 // Starts initiates a proces that is already active
@@ -117,10 +119,16 @@ func (info ProcesInfo) Creates(proc Proces, label string) {
 	prdsymb.Create(x(info.time), y(info.proc), y(proc))
 }
 
-// AsServedByProces can specify proces that will serve proces in
+// AsSentByProces can specify proces that will serve proces in
 // At.  Used in case there are several process that can serve.
-func (info ProcesInfo) AsServedByProces(proc Proces) ProcesInfo {
-	return ProcesInfo{time: info.time, proc: info.proc, servedby: true, servedproc: proc}
+func (info ProcesInfo) AsServedBy(proc Proces, channel Channel) ProcesInfo {
+	return ProcesInfo{
+		time:       info.time,
+		proc:       info.proc,
+		servedBy:   true,
+		servedProc: proc,
+		servedChan: channel,
+	}
 }
 
 // WantsToReceive marks proces info.proc as to want receive on channel c
@@ -135,8 +143,10 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) AndInfo {
 	// draw receive symbol
 	prdsymb.Receive(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
-	// iets dergelijks moeten we ook in AndToReceiveOn krijgen
-	if sproc, ok := findWaiting(forSend, c); ok {
+	if info.servedBy {
+		connectProces(info, info.servedChan, info.servedProc, forSend)
+		// set state to active
+	} else if sproc, ok := findWaiting(forSend, c); ok {
 		connectProces(info, c, sproc, forSend)
 	} else {
 		states[info.proc] = state{
@@ -161,8 +171,10 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) AndInfo {
 	// draw send symbol
 	prdsymb.Send(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
-	// iets dergelijks moeten we ook in AndToReceiveOn krijgen
-	if rproc, ok := findWaiting(forReceive, c); ok {
+	if info.servedBy {
+		connectProces(info, info.servedChan, info.servedProc, forReceive)
+		// set state to active
+	} else if rproc, ok := findWaiting(forReceive, c); ok {
 		connectProces(info, c, rproc, forReceive)
 	} else {
 		states[info.proc] = state{
@@ -238,25 +250,13 @@ func (info ProcesInfo) Terminates() {
 // connectProces finds a proces that is willing to serve the present
 // proces that wants to send or receive
 func connectProces(info ProcesInfo, c Channel, rsProces Proces, pstate processtate) {
-	verb1 := "send"
-	verb2 := "sent"
+	verb := "sent"
 
 	if pstate == forReceive {
-		verb1 = "receive"
-		verb2 = "received"
+		verb = "received"
 	}
 
-	// check if AsServedByProces is added
-	if info.servedby {
-		rsProces = info.servedproc
-
-		if !checkWaitingProces(rsProces, c, pstate) {
-			fmt.Fprintf(Log, "WARNING: proces %s not waiting to %s (%q)\n",
-				procLabels[rsProces], verb1, states[rsProces].pstate)
-		}
-	}
-
-	fmt.Fprintf(Log, "- %s by proces %q\n", verb2, procLabels[rsProces])
+	fmt.Fprintf(Log, "- %s by proces %q\n", verb, procLabels[rsProces])
 
 	if pstate == forReceive {
 		prdsymb.Receive(prdsymb.Postponed, x(info.time), y(rsProces), channelColor(c))
@@ -299,8 +299,6 @@ func addWaitState(proc Proces, nstate processtate, channel Channel) {
 	}
 
 	states[proc] = update
-
-	// fmt.Fprintf(Log, "****\n%#v\n****\n", states[proc])
 }
 
 // finds a process that currently wants to receive or send on channel c
