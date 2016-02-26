@@ -29,10 +29,7 @@ const (
 	fontsize = 11  // font size
 )
 
-// http://tutorials.jenkov.com/svg/svg-and-css.html
-
 // draw a send symbol (is a little bit like an "s")
-// de basis kan een soort s zijn (een gespiegelde z) en deze kan worden ingevuld
 func Send(m Mode, x, y int, color string) {
 	if m == Wait || m == Immediately {
 		canvas.Polygon([]int{x - d - sw, x - d - sw, x + d - sw}, []int{y - d + sw, y + d + sw, y + d + sw},
@@ -46,7 +43,7 @@ func Send(m Mode, x, y int, color string) {
 	}
 }
 
-// Receice draws a receive message symbol
+// Receice draws a receive message symbol, shaped like an "r"
 func Receive(m Mode, x, y int, color string) {
 	if m == Wait || m == Immediately {
 		canvas.Polyline([]int{x - d - sw, x - d - sw, x + d + sw}, []int{y + d + sw, y - d - sw, y - d - sw},
@@ -57,6 +54,21 @@ func Receive(m Mode, x, y int, color string) {
 		canvas.Square(x-d+3*sw, y-d+3*sw, 2*d-2*sw,
 			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:%s;stroke-opacity:%.2f;fill-opacity:%.2f",
 				"none", size, color, opacity, opacity))
+	}
+}
+
+// Else draws the else symbol, more or less a question mark
+func Else(m Mode, x, y int) {
+	if m == Wait || m == Immediately {
+		canvas.Bezier(x-d, y-4*sw, x-d, y-d, x+d, y-d, x+d, y-4*sw,
+			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
+				"black", size, opacity))
+		canvas.Bezier(x+d, y-3*sw, x+d, y+d/2, x, y, x, y+d-4*sw,
+			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
+				"black", size, opacity))
+	}
+	if m == Postponed || m == Immediately {
+		canvas.Circle(x, y+d+3*sw, 6*sw, fmt.Sprintf("fill-opacity:%.2f;", opacity))
 	}
 }
 
@@ -71,6 +83,7 @@ func Process(m Mode, x1, x2, y int) {
 	}
 }
 
+// Create draws a proces creation line from y1 to y2
 func Create(x, y1, y2 int) {
 	var north, south int
 
