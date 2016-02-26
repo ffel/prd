@@ -131,6 +131,27 @@ func (info ProcesInfo) AsServedBy(proc Proces, channel Channel) ProcesInfo {
 	}
 }
 
+// DoesNotWait adds does not wait symbol
+func (info ProcesInfo) DoesNotWait() AndInfo {
+	fmt.Fprintf(Log, " does not want to wait\n")
+
+	// draw line
+	if states[info.proc].pstate == active {
+		prdsymb.Process(prdsymb.Active, x(states[info.proc].since), x(info.time), y(info.proc))
+	}
+	// draw receive symbol
+	prdsymb.Else(prdsymb.Wait, x(info.time), y(info.proc))
+
+	// temp solution, taken from WantsToReceiveOn, isn't very pretty
+	if info.servedBy {
+		connectProces(info, info.servedChan, info.servedProc, forReceive)
+		// hard coded ....................................... ^^^^^^^^^^
+	}
+	// else, complete Else symbol
+
+	return AndInfo{info, 0}
+}
+
 // WantsToReceive marks proces info.proc as to want receive on channel c
 // If another proces is to send on c, the receive will actually happen
 func (info ProcesInfo) WantsToReceiveOn(c Channel) AndInfo {
@@ -328,13 +349,15 @@ func y(val Proces) int {
 }
 
 func channelColor(c Channel) string {
-	switch int(c) % 3 {
+	switch int(c) % 4 {
 	case 0:
 		return "red"
 	case 1:
 		return "blue"
 	case 2:
 		return "green"
+	case 3:
+		return "darkmagenta"
 	}
 
 	return "black"
