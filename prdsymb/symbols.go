@@ -57,18 +57,15 @@ func Receive(m Mode, x, y int, color string) {
 	}
 }
 
-// Else draws the else symbol, more or less a question mark
+// Else draws the else symbol, a big dot
 func Else(m Mode, x, y int) {
 	if m == Wait || m == Immediately {
-		canvas.Bezier(x-d, y-4*sw, x-d, y-d, x+d, y-d, x+d, y-4*sw,
-			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
-				"black", size, opacity))
-		canvas.Bezier(x+d, y-3*sw, x+d, y+d/2, x, y, x, y+d-4*sw,
+		canvas.Circle(x, y, d,
 			fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
 				"black", size, opacity))
 	}
 	if m == Postponed || m == Immediately {
-		canvas.Circle(x, y+d+3*sw, 6*sw, fmt.Sprintf("fill-opacity:%.2f;", opacity))
+		canvas.Circle(x, y, 6*sw, fmt.Sprintf("fill-opacity:%.2f;", opacity))
 	}
 }
 

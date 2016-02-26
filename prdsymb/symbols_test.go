@@ -58,30 +58,25 @@ func Example() {
 	// <rect x="93" y="93" width="18" height="18" style="stroke:none;stroke-width:2;fill:blue;stroke-opacity:0.30;fill-opacity:0.30"/>
 	// <polyline points="139,111 139,89 161,89" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <rect x="143" y="93" width="18" height="18" style="stroke:none;stroke-width:2;fill:blue;stroke-opacity:0.30;fill-opacity:0.30"/>
-	// <path d="M40,146 C40,140 60,140 60,146" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <path d="M60,147 C60,155 50,150 50,156" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <circle cx="100" cy="163" r="6" style="fill-opacity:0.30;"/>
-	// <path d="M140,146 C140,140 160,140 160,146" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <path d="M160,147 C160,155 150,150 150,156" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <circle cx="150" cy="163" r="6" style="fill-opacity:0.30;"/>
-	// <path d="M40,196 C40,190 60,190 60,196" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <path d="M60,197 C60,205 50,200 50,206" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <circle cx="50" cy="150" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <circle cx="100" cy="150" r="6" style="fill-opacity:0.30;"/>
+	// <circle cx="150" cy="150" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <circle cx="150" cy="150" r="6" style="fill-opacity:0.30;"/>
+	// <circle cx="50" cy="200" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <polygon points="35,187 35,207 55,207" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
 	// <polyline points="31,203 31,181 53,181" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <path d="M90,196 C90,190 110,190 110,196" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <path d="M110,197 C110,205 100,200 100,206" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <circle cx="100" cy="200" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <polygon points="85,187 85,207 105,207" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
 	// <polyline points="81,203 81,181 103,181" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <polygon points="91,189 111,189 111,209" style="stroke:none;stroke-width:2;fill:red;stroke-opacity:0.30;fill-opacity:0.30"/>
-	// <path d="M140,196 C140,190 160,190 160,196" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <path d="M160,197 C160,205 150,200 150,206" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <circle cx="150" cy="200" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <polygon points="135,187 135,207 155,207" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
 	// <polyline points="131,203 131,181 153,181" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <rect x="143" y="193" width="18" height="18" style="stroke:none;stroke-width:2;fill:blue;stroke-opacity:0.30;fill-opacity:0.30"/>
-	// <path d="M190,196 C190,190 210,190 210,196" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <path d="M210,197 C210,205 200,200 200,206" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <circle cx="200" cy="200" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <polygon points="185,187 185,207 205,207" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
 	// <polyline points="181,203 181,181 203,181" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <circle cx="200" cy="213" r="6" style="fill-opacity:0.30;"/>
+	// <circle cx="200" cy="200" r="6" style="fill-opacity:0.30;"/>
 	// </svg>
+
 }
