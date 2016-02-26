@@ -90,19 +90,6 @@ func image_2() {
 	LabelChannel(toTerminal, "to terminal")
 	LabelChannel(toExit, "to exit")
 
-	/*
-		Wanneer een klant aankomt bij de receptie wordt deze aan de wachtrij
-		toegevoegd wanneer de wachtrij niet leeg is.
-
-		Wanneer er geen wachtrij is, wordt gekeken of er een terminal vrij is.
-
-		Als er een terminal vrij is (als de toTerminal channel de tourist
-		accepteert) dan gaat de tourist naar een terminal, anders gaat de
-		tourist alsnog naar de wachtrij.
-
-		Touristen in de wachtrij worden sowieso op toTerminal aangeboden.
-	*/
-
 	At(0, internetCafe).Starts("internet café")
 	At(1, internetCafe).Creates(reception, "reception")
 	At(1, internetCafe).Creates(waiting, "waiting")
@@ -117,21 +104,23 @@ func image_2() {
 	At(2, exit).WantsToReceiveOn(toExit)
 
 	At(3, internetCafe).WantsToSendOn(toReception, "al")
-	At(4, reception).AsServedBy(term2, toTerminal).DoesNotWait().AndToSendOn(toTerminal, "al")
-	// At(13, term1).WantsToSendOn(toExit, "al")
-	// At(14, exit).WantsToReceiveOn(toExit)
+	At(4, reception).AsServedBy(term2, toTerminal).WantsToSendOn(toTerminal, "al").AndDoesNotWait()
+	At(13, term2).WantsToSendOn(toExit, "al")
+	At(14, exit).WantsToReceiveOn(toExit)
+	// At(14, term2).WantsToReceiveOn(toTerminal) BUG!
 
-	// At(5, reception).WantsToReceiveOn(toReception)
-
-	// At(6, internetCafe).WantsToSendOn(toReception, "bob")
+	At(5, reception).WantsToReceiveOn(toReception)
+	At(6, internetCafe).WantsToSendOn(toReception, "bob")
+	At(7, reception).WantsToSendOn(toTerminal, "bob").AndDoesNotWait()
 	// At(7, reception).AsServedBy(term2, toTerminal).WantsToSendOn(toTerminal, "bob")
-	// At(15, term2).WantsToSendOn(toExit, "bob")
-	// At(16, exit).WantsToReceiveOn(toExit)
+	At(15, term1).WantsToSendOn(toExit, "bob")
+	At(16, exit).WantsToReceiveOn(toExit)
+	// At(16, term1).WantsToReceiveOn(toTerminal) BUG!
 
 	// // nu moet iets gedaan worden wanneer op 9 de derde toerist komt
-	// At(8, reception).WantsToReceiveOn(toReception)
-	// At(9, internetCafe).WantsToSendOn(toReception, "chuck")
-	// At(10, reception).WantsToSendOn(toTerminal, "chuck") // no terminal available
+	At(8, reception).WantsToReceiveOn(toReception)
+	At(9, internetCafe).WantsToSendOn(toReception, "chuck")
+	At(10, reception).WantsToSendOn(toTerminal, "chuck").AndDoesNotWait() // no terminal available
 
 	At(25, internetCafe).Terminates()
 

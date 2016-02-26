@@ -58,22 +58,22 @@ func Example() {
 	// <rect x="93" y="93" width="18" height="18" style="stroke:none;stroke-width:2;fill:blue;stroke-opacity:0.30;fill-opacity:0.30"/>
 	// <polyline points="139,111 139,89 161,89" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <rect x="143" y="93" width="18" height="18" style="stroke:none;stroke-width:2;fill:blue;stroke-opacity:0.30;fill-opacity:0.30"/>
-	// <circle cx="50" cy="150" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <line x1="38" y1="162" x2="62" y2="138" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <circle cx="100" cy="150" r="6" style="fill-opacity:0.30;"/>
-	// <circle cx="150" cy="150" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <line x1="138" y1="162" x2="162" y2="138" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <circle cx="150" cy="150" r="6" style="fill-opacity:0.30;"/>
-	// <circle cx="50" cy="200" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <line x1="38" y1="212" x2="62" y2="188" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <polygon points="35,187 35,207 55,207" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
 	// <polyline points="31,203 31,181 53,181" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
-	// <circle cx="100" cy="200" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <line x1="88" y1="212" x2="112" y2="188" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <polygon points="85,187 85,207 105,207" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
 	// <polyline points="81,203 81,181 103,181" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <polygon points="91,189 111,189 111,209" style="stroke:none;stroke-width:2;fill:red;stroke-opacity:0.30;fill-opacity:0.30"/>
-	// <circle cx="150" cy="200" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <line x1="138" y1="212" x2="162" y2="188" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <polygon points="135,187 135,207 155,207" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
 	// <polyline points="131,203 131,181 153,181" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <rect x="143" y="193" width="18" height="18" style="stroke:none;stroke-width:2;fill:blue;stroke-opacity:0.30;fill-opacity:0.30"/>
-	// <circle cx="200" cy="200" r="10" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
+	// <line x1="188" y1="212" x2="212" y2="188" style="stroke:black;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <polygon points="185,187 185,207 205,207" style="stroke:red;stroke-width:2;fill:none;stroke-opacity:0.30"/>
 	// <polyline points="181,203 181,181 203,181" style="stroke:blue;stroke-width:2;fill:none;stroke-opacity:0.30;stroke-linecap:round"/>
 	// <circle cx="200" cy="200" r="6" style="fill-opacity:0.30;"/>
