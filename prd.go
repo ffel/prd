@@ -239,7 +239,7 @@ func (and AndInfo) AndDoesNotWait() AndInfo {
 
 	// draw receive symbol
 	prdsymb.Else(prdsymb.Wait,
-		x(and.time)+deltaSelect, y(and.proc)+deltaSelect)
+		x(and.time), y(and.proc))
 
 	// temp solution, taken from WantsToReceiveOn, isn't very pretty
 	// if and.servedBy {

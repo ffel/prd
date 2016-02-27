@@ -57,13 +57,13 @@ func Receive(m Mode, x, y int, color string) {
 	}
 }
 
-// Else draws the else symbol
+// Else draws the else symbol, a double line in line with channel
+// communication
 func Else(m Mode, x, y int) {
 	if m == Wait || m == Immediately {
-		// canvas.Bezier(x+d+sw, y-d-sw, x+d+sw, y+3*d/2+sw, x+3*d/2+sw, y+d+sw, x-d-sw, y+d+sw,
-		// 	fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
-		// 		"black", size, opacity))
-		canvas.Line(x-5*d/4, y+5*d/4, x+5*d/4, y-5*d/4, fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
+		canvas.Line(x-2*sw, y+7*d/5, x-2*sw, y-7*d/5, fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
+			"black", size, opacity))
+		canvas.Line(x+2*sw, y+7*d/5, x+2*sw, y-7*d/5, fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
 			"black", size, opacity))
 	}
 	if m == Postponed || m == Immediately {
