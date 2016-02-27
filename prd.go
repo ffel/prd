@@ -234,14 +234,12 @@ func (and AndInfo) AndToSendOn(c Channel, data string) AndInfo {
 }
 
 // DoesNotWait adds does not wait symbol
-func (and AndInfo) AndDoesNotWait() AndInfo {
+func (and AndInfo) AndDoesNotWait() {
 	fmt.Fprintf(Log, " does not want to wait\n")
 
 	// draw receive symbol
 	prdsymb.Else(prdsymb.Wait,
 		x(and.time), y(and.proc))
-
-	return and
 }
 
 func (info ProcesInfo) Terminates() {
