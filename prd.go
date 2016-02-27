@@ -146,7 +146,7 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) AndInfo {
 	if info.servedBy {
 		connectProces(info, info.servedChan, info.servedProc, forSend)
 		// set state to active
-	} else if sproc, ok := findWaiting(forSend, c); ok {
+	} else if sproc, ok := findWaiting(forSend, c, info.time); ok {
 		connectProces(info, c, sproc, forSend)
 	} else {
 		states[info.proc] = state{
@@ -174,7 +174,7 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) AndInfo {
 	if info.servedBy {
 		connectProces(info, info.servedChan, info.servedProc, forReceive)
 		// set state to active
-	} else if rproc, ok := findWaiting(forReceive, c); ok {
+	} else if rproc, ok := findWaiting(forReceive, c, info.time); ok {
 		connectProces(info, c, rproc, forReceive)
 	} else {
 		states[info.proc] = state{
@@ -205,7 +205,7 @@ func (and AndInfo) AndToReceiveOn(c Channel) AndInfo {
 		x(and.time)-and.nr*deltaSelect,
 		y(and.proc)-and.nr*deltaSelect, channelColor(c))
 
-	if sproc, ok := findWaiting(forSend, c); ok && states[and.proc].pstate == waiting {
+	if sproc, ok := findWaiting(forSend, c, and.time); ok && states[and.proc].pstate == waiting {
 		connectProces(and.ProcesInfo, c, sproc, forSend)
 	}
 
@@ -224,7 +224,7 @@ func (and AndInfo) AndToSendOn(c Channel, data string) AndInfo {
 		x(and.time)-and.nr*deltaSelect,
 		y(and.proc)-and.nr*deltaSelect, channelColor(c))
 
-	if rproc, ok := findWaiting(forReceive, c); ok && states[and.proc].pstate == waiting {
+	if rproc, ok := findWaiting(forReceive, c, and.time); ok && states[and.proc].pstate == waiting {
 		connectProces(and.ProcesInfo, c, rproc, forReceive)
 	}
 
@@ -240,13 +240,6 @@ func (and AndInfo) AndDoesNotWait() AndInfo {
 	// draw receive symbol
 	prdsymb.Else(prdsymb.Wait,
 		x(and.time), y(and.proc))
-
-	// temp solution, taken from WantsToReceiveOn, isn't very pretty
-	// if and.servedBy {
-	// 	connectProces(and.ProcesInfo, and.servedChan, and.servedProc, forReceive)
-	// 	// hard coded .................................... ^^^^^^^^^^
-	// }
-	// else, complete Else symbol
 
 	return and
 }
@@ -321,12 +314,13 @@ func addWaitState(proc Proces, nstate processtate, channel Channel) {
 
 // finds a process that currently wants to receive or send on channel c
 // returns false in case there is no such Proces
-func findWaiting(pstate processtate, c Channel) (Proces, bool) {
-	for v, k := range states {
-		if k.pstate == waiting {
-			for _, w := range k.waitstate {
+func findWaiting(pstate processtate, c Channel, now int) (Proces, bool) {
+	for k, v := range states {
+		// fmt.Printf("** since %v\n", v.since)
+		if now >= v.since && v.pstate == waiting {
+			for _, w := range v.waitstate {
 				if w.state == pstate && w.channel == c {
-					return v, true
+					return k, true
 				}
 			}
 		}

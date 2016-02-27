@@ -107,7 +107,7 @@ func image_2() {
 	At(4, reception).AsServedBy(term2, toTerminal).WantsToSendOn(toTerminal, "al").AndDoesNotWait()
 	At(13, term2).WantsToSendOn(toExit, "al")
 	At(14, exit).WantsToReceiveOn(toExit)
-	// At(14, term2).WantsToReceiveOn(toTerminal) BUG!
+	At(14, term2).WantsToReceiveOn(toTerminal)
 
 	At(5, reception).WantsToReceiveOn(toReception)
 	At(6, internetCafe).WantsToSendOn(toReception, "bob")
@@ -115,12 +115,13 @@ func image_2() {
 	// At(7, reception).AsServedBy(term2, toTerminal).WantsToSendOn(toTerminal, "bob")
 	At(15, term1).WantsToSendOn(toExit, "bob")
 	At(16, exit).WantsToReceiveOn(toExit)
-	// At(16, term1).WantsToReceiveOn(toTerminal) BUG!
+	At(16, term1).WantsToReceiveOn(toTerminal)
 
-	// // nu moet iets gedaan worden wanneer op 9 de derde toerist komt
 	At(8, reception).WantsToReceiveOn(toReception)
 	At(9, internetCafe).WantsToSendOn(toReception, "chuck")
 	At(10, reception).WantsToSendOn(toTerminal, "chuck").AndDoesNotWait() // no terminal available
+
+	// dit is het moment dat we iets met de derde tourist moeten doen
 
 	At(25, internetCafe).Terminates()
 
