@@ -237,9 +237,22 @@ func (and AndInfo) AndToSendOn(c Channel, data string) AndInfo {
 func (and AndInfo) AndDoesNotWait() {
 	fmt.Fprintf(Log, " does not want to wait\n")
 
-	// draw receive symbol
 	prdsymb.Else(prdsymb.Wait,
 		x(and.time), y(and.proc))
+
+	if states[and.proc].pstate == waiting {
+		prdsymb.Else(prdsymb.Immediately,
+			x(and.time), y(and.proc))
+
+		states[and.proc] = state{
+			since:     and.time,
+			pstate:    active,
+			waitstate: []wstate{},
+		}
+	} else {
+		prdsymb.Else(prdsymb.Wait,
+			x(and.time), y(and.proc))
+	}
 }
 
 func (info ProcesInfo) Terminates() {
@@ -314,7 +327,6 @@ func addWaitState(proc Proces, nstate processtate, channel Channel) {
 // returns false in case there is no such Proces
 func findWaiting(pstate processtate, c Channel, now int) (Proces, bool) {
 	for k, v := range states {
-		// fmt.Printf("** since %v\n", v.since)
 		if now >= v.since && v.pstate == waiting {
 			for _, w := range v.waitstate {
 				if w.state == pstate && w.channel == c {

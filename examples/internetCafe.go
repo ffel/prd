@@ -105,25 +105,40 @@ func image_2() {
 
 	At(3, internetCafe).WantsToSendOn(toReception, "al")
 	At(4, reception).AsServedBy(term2, toTerminal).WantsToSendOn(toTerminal, "al").AndDoesNotWait()
-	At(13, term2).WantsToSendOn(toExit, "al")
-	At(14, exit).WantsToReceiveOn(toExit)
-	At(14, term2).WantsToReceiveOn(toTerminal)
 
 	At(5, reception).WantsToReceiveOn(toReception)
 	At(6, internetCafe).WantsToSendOn(toReception, "bob")
 	At(7, reception).WantsToSendOn(toTerminal, "bob").AndDoesNotWait()
-	// At(7, reception).AsServedBy(term2, toTerminal).WantsToSendOn(toTerminal, "bob")
-	At(15, term1).WantsToSendOn(toExit, "bob")
-	At(16, exit).WantsToReceiveOn(toExit)
-	At(16, term1).WantsToReceiveOn(toTerminal)
 
 	At(8, reception).WantsToReceiveOn(toReception)
-	At(9, internetCafe).WantsToSendOn(toReception, "chuck")
-	At(10, reception).WantsToSendOn(toTerminal, "chuck").AndDoesNotWait() // no terminal available
+	At(10, internetCafe).WantsToSendOn(toReception, "chuck")
+	At(11, reception).WantsToSendOn(toTerminal, "chuck").AndDoesNotWait() // no terminal available
+	At(12, reception).WantsToSendOn(toQueue, "chuck")
+	At(13, reception).WantsToReceiveOn(toReception)
+	At(13, waiting).WantsToReceiveOn(toQueue).AndToSendOn(toTerminal, "chuck")
 
-	// dit is het moment dat we iets met de derde tourist moeten doen
+	// not satisfied with proces waiting at 13
+
+	At(15, term2).WantsToSendOn(toExit, "al")
+	At(16, exit).WantsToReceiveOn(toExit)
+	At(16, term2).WantsToReceiveOn(toTerminal)
+
+	At(17, waiting).WantsToReceiveOn(toQueue)
+
+	At(18, term1).WantsToSendOn(toExit, "bob")
+	At(19, exit).WantsToReceiveOn(toExit)
+	At(19, term1).WantsToReceiveOn(toTerminal)
+
+	At(21, term2).WantsToSendOn(toExit, "chuck")
+	At(22, term2).WantsToReceiveOn(toTerminal)
+	At(22, exit).WantsToReceiveOn(toExit)
 
 	At(25, internetCafe).Terminates()
+	At(25, reception).Terminates()
+	At(25, waiting).Terminates()
+	At(25, term1).Terminates()
+	At(25, term2).Terminates()
+	At(25, exit).Terminates()
 
 	PrdEnd()
 	ioutil.WriteFile("internetCafe_2.svg", SVG.Bytes(), 0644)
