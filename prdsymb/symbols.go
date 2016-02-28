@@ -101,21 +101,27 @@ func Create(x, y1, y2 int) {
 }
 
 // Channel draws a vertical line to display communication over a channel
-func Channel(x, y1, y2 int, color string) {
+func Channel(x, y1, y2 int, color string, data string) {
 
-	var north, south int
+	var north, south, ydat int
 
 	if y1 > y2 {
 		north = y2
 		south = y1
+		ydat = y2 + d*11/4
 	} else {
 		north = y1
 		south = y2
+		ydat = y2 - d*11/4
 	}
 
 	canvas.Line(x, north+d+4*sw, x, south-d-4*sw, fmt.Sprintf("stroke:%s;stroke-width:%d;fill:none;stroke-opacity:%.2f;stroke-linecap:round",
 		color, size, opacity))
 
+	if data != "" {
+		canvas.Text(x+2*sw, ydat, data, fmt.Sprintf("fill:%s;text-anchor:%s;font-size:%dpx;fill-opacity:%.2f;font-family:Verdana",
+			color, "start", fontsize, opacity))
+	}
 }
 
 // Label writes a process label

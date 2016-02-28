@@ -13,7 +13,7 @@ var (
 	offsetX     int = 150
 	offsetY     int = 25
 	deltaX      int = 30
-	deltaY      int = 40
+	deltaY      int = 60
 	deltaSelect int = 4
 )
 
@@ -37,6 +37,7 @@ type state struct {
 type wstate struct {
 	state   processtate // forSend, forReceive
 	channel Channel
+	data    string // in case of send
 }
 
 var states map[Proces]state
@@ -144,10 +145,10 @@ func (info ProcesInfo) WantsToReceiveOn(c Channel) AndInfo {
 	prdsymb.Receive(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
 	if info.servedBy {
-		connectProces(info, info.servedChan, info.servedProc, forSend)
+		connectProces(info, info.servedChan, info.servedProc, forSend, "")
 		// set state to active
 	} else if sproc, ok := findWaiting(forSend, c, info.time); ok {
-		connectProces(info, c, sproc, forSend)
+		connectProces(info, c, sproc, forSend, "")
 	} else {
 		states[info.proc] = state{
 			since:     info.time,
@@ -172,15 +173,14 @@ func (info ProcesInfo) WantsToSendOn(c Channel, data string) AndInfo {
 	prdsymb.Send(prdsymb.Wait, x(info.time), y(info.proc), channelColor(c))
 
 	if info.servedBy {
-		connectProces(info, info.servedChan, info.servedProc, forReceive)
-		// set state to active
+		connectProces(info, info.servedChan, info.servedProc, forReceive, data)
 	} else if rproc, ok := findWaiting(forReceive, c, info.time); ok {
-		connectProces(info, c, rproc, forReceive)
+		connectProces(info, c, rproc, forReceive, data)
 	} else {
 		states[info.proc] = state{
 			since:     info.time,
 			pstate:    waiting,
-			waitstate: []wstate{{state: forSend, channel: c}},
+			waitstate: []wstate{{state: forSend, channel: c, data: data}},
 		}
 	}
 
@@ -206,10 +206,10 @@ func (and AndInfo) AndToReceiveOn(c Channel) AndInfo {
 		y(and.proc)-and.nr*deltaSelect, channelColor(c))
 
 	if sproc, ok := findWaiting(forSend, c, and.time); ok && states[and.proc].pstate == waiting {
-		connectProces(and.ProcesInfo, c, sproc, forSend)
+		connectProces(and.ProcesInfo, c, sproc, forSend, "")
 	}
 
-	addWaitState(and.proc, forReceive, c)
+	addWaitState(and.proc, forReceive, c, "")
 
 	return and
 }
@@ -225,10 +225,10 @@ func (and AndInfo) AndToSendOn(c Channel, data string) AndInfo {
 		y(and.proc)-and.nr*deltaSelect, channelColor(c))
 
 	if rproc, ok := findWaiting(forReceive, c, and.time); ok && states[and.proc].pstate == waiting {
-		connectProces(and.ProcesInfo, c, rproc, forReceive)
+		connectProces(and.ProcesInfo, c, rproc, forReceive, data)
 	}
 
-	addWaitState(and.proc, forSend, c)
+	addWaitState(and.proc, forSend, c, data)
 
 	return and
 }
@@ -271,7 +271,7 @@ func (info ProcesInfo) Terminates() {
 
 // connectProces finds a proces that is willing to serve the present
 // proces that wants to send or receive
-func connectProces(info ProcesInfo, c Channel, rsProces Proces, pstate processtate) {
+func connectProces(info ProcesInfo, c Channel, rsProces Proces, pstate processtate, data string) {
 	verb := "sent"
 
 	if pstate == forReceive {
@@ -283,13 +283,17 @@ func connectProces(info ProcesInfo, c Channel, rsProces Proces, pstate processta
 	if pstate == forReceive {
 		prdsymb.Receive(prdsymb.Postponed, x(info.time), y(rsProces), channelColor(c))
 		prdsymb.Send(prdsymb.Postponed, x(info.time), y(info.proc), channelColor(c))
+		prdsymb.Channel(x(info.time), y(rsProces), y(info.proc), channelColor(c), data)
 	} else if pstate == forSend {
 		prdsymb.Send(prdsymb.Postponed, x(info.time), y(rsProces), channelColor(c))
 		prdsymb.Receive(prdsymb.Postponed, x(info.time), y(info.proc), channelColor(c))
+		prdsymb.Channel(x(info.time), y(info.proc), y(rsProces), channelColor(c),
+			states[rsProces].waitstate[len(states[rsProces].waitstate)-1].data)
 	}
 
-	prdsymb.Channel(x(info.time), y(rsProces), y(info.proc), channelColor(c))
 	prdsymb.Process(prdsymb.Asleep, x(states[rsProces].since), x(info.time), y(rsProces))
+
+	// kan ik hier bij het verstuurde bericht?
 
 	states[info.proc] = state{since: info.time, pstate: active}
 	states[rsProces] = state{since: info.time, pstate: active}
@@ -309,10 +313,10 @@ func checkWaitingProces(proc Proces, ch Channel, state processtate) bool {
 }
 
 // addWaitState expands a proces state with another receiver or sender
-func addWaitState(proc Proces, nstate processtate, channel Channel) {
+func addWaitState(proc Proces, nstate processtate, channel Channel, data string) {
 
 	wstates := append(states[proc].waitstate,
-		wstate{state: nstate, channel: channel})
+		wstate{state: nstate, channel: channel, data: data})
 
 	update := state{
 		since:     states[proc].since,
